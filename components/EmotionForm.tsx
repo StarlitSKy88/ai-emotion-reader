@@ -31,11 +31,11 @@ const STATUSES = [
 ];
 
 const FOCUS_OPTIONS = [
-  { value: "self", label: "🌱 自我认知" },
-  { value: "emotion", label: "💕 情感关系" },
-  { value: "career", label: "💼 职业发展" },
-  { value: "future", label: "🔮 未来方向" },
-  { value: "psychology", label: "🧠 心理模式" },
+  { value: "self", label: "自我认知" },
+  { value: "emotion", label: "情感关系" },
+  { value: "career", label: "职业发展" },
+  { value: "future", label: "未来方向" },
+  { value: "psychology", label: "心理模式" },
 ];
 
 export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
@@ -70,16 +70,17 @@ export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 animate-slide-up">
+    <form onSubmit={handleSubmit} className="space-y-10">
       {/* 称呼 */}
       <div>
-        <label className="block text-sm font-medium text-night-200 mb-2">
-          我该怎么称呼你？（可选）
+        <label className="block text-sm font-medium text-ink mb-3">
+          我该怎么称呼你？
+          <span className="text-ink-muted font-normal ml-2">（可选）</span>
         </label>
         <input
           type="text"
-          className="input-field"
-          placeholder="比如：小琳、阿杰、或者你想被称呼的名字"
+          className="input-editor"
+          placeholder="小琳、阿杰、或者你想被称呼的名字"
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           maxLength={20}
@@ -88,16 +89,14 @@ export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
 
       {/* 性别 */}
       <div>
-        <label className="block text-sm font-medium text-night-200 mb-2">
-          你的性别
-        </label>
+        <label className="block text-sm font-medium text-ink mb-3">性别</label>
         <div className="flex flex-wrap gap-2">
           {GENDERS.map((g) => (
             <button
               key={g.value}
               type="button"
-              className={`pill ${
-                formData.gender === g.value ? "pill-active" : "pill-default"
+              className={`pill-editor ${
+                formData.gender === g.value ? "pill-editor-active" : ""
               }`}
               onClick={() => setFormData({ ...formData, gender: g.value })}
             >
@@ -109,13 +108,11 @@ export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
 
       {/* 年龄 */}
       <div>
-        <label className="block text-sm font-medium text-night-200 mb-2">
-          你的年龄
-        </label>
+        <label className="block text-sm font-medium text-ink mb-3">年龄</label>
         <input
           type="number"
-          className="input-field"
-          placeholder="比如：28"
+          className="input-editor max-w-[120px]"
+          placeholder="28"
           value={formData.age}
           onChange={(e) => setFormData({ ...formData, age: e.target.value })}
           min="14"
@@ -125,7 +122,7 @@ export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
 
       {/* 情感状态 */}
       <div>
-        <label className="block text-sm font-medium text-night-200 mb-2">
+        <label className="block text-sm font-medium text-ink mb-3">
           当前情感状态
         </label>
         <div className="flex flex-wrap gap-2">
@@ -133,8 +130,8 @@ export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
             <button
               key={s.value}
               type="button"
-              className={`pill ${
-                formData.status === s.value ? "pill-active" : "pill-default"
+              className={`pill-editor ${
+                formData.status === s.value ? "pill-editor-active" : ""
               }`}
               onClick={() => setFormData({ ...formData, status: s.value })}
             >
@@ -146,18 +143,17 @@ export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
 
       {/* 关注重点 */}
       <div>
-        <label className="block text-sm font-medium text-night-200 mb-2">
-          你最想了解什么？（可多选）
+        <label className="block text-sm font-medium text-ink mb-3">
+          你最想了解什么？{" "}
+          <span className="text-ink-muted font-normal">（可多选）</span>
         </label>
         <div className="flex flex-wrap gap-2">
           {FOCUS_OPTIONS.map((f) => (
             <button
               key={f.value}
               type="button"
-              className={`pill ${
-                formData.focusAreas.includes(f.value)
-                  ? "pill-active"
-                  : "pill-default"
+              className={`pill-editor ${
+                formData.focusAreas.includes(f.value) ? "pill-editor-active" : ""
               }`}
               onClick={() => toggleFocus(f.value)}
             >
@@ -169,13 +165,13 @@ export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
 
       {/* 核心困惑 */}
       <div>
-        <label className="block text-sm font-medium text-night-200 mb-2">
+        <label className="block text-sm font-medium text-ink mb-3">
           此刻最困扰你的是什么？{" "}
-          <span className="text-mystic-400">*</span>
+          <span className="text-accent">*</span>
         </label>
         <textarea
           required
-          className="input-field min-h-[140px] resize-y"
+          className="input-editor input-editor-textarea"
           placeholder="比如：我工作 5 年了，最近总觉得自己在原地踏步。看着同龄人都在往前走，我不知道自己真正想要什么……"
           value={formData.question}
           onChange={(e) =>
@@ -183,26 +179,27 @@ export default function EmotionForm({ onSubmit, loading }: EmotionFormProps) {
           }
           maxLength={1000}
         />
-        <div className="text-xs text-night-400 mt-1 text-right">
+        <div className="text-xs text-ink-muted mt-2 text-right">
           {formData.question.length} / 1000
         </div>
       </div>
 
       {/* 提交按钮 */}
-      <button type="submit" className="btn-primary" disabled={loading}>
-        {loading ? (
-          <span className="flex items-center justify-center gap-2">
-            <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            AI 正在为你解读……
-          </span>
-        ) : (
-          "🌙 开始我的专属解读"
-        )}
-      </button>
-
-      <p className="text-xs text-night-400 text-center">
-        ⏱ 约 30 秒生成 | 基于 AI 算法 + 心理学模型
-      </p>
+      <div className="pt-6 border-t hairline">
+        <button type="submit" className="btn-editor" disabled={loading}>
+          {loading ? (
+            <>
+              <span className="inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              AI 正在为你解读
+            </>
+          ) : (
+            <>开始我的专属解读 →</>
+          )}
+        </button>
+        <p className="text-xs text-ink-muted mt-4">
+          约 30 秒生成 · 基于 AI 算法 + 心理学模型
+        </p>
+      </div>
     </form>
   );
 }

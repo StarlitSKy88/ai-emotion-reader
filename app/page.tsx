@@ -17,7 +17,6 @@ export default function Home() {
     process.env.NEXT_PUBLIC_WECHAT_ID || "your_wechat_id_here";
   const siteName = process.env.NEXT_PUBLIC_SITE_NAME || "问心 AI";
 
-  // 第一步：生成免费摘要
   const handleFormSubmit = async (data: UserFormData) => {
     setFormData(data);
     setLoading(true);
@@ -30,9 +29,7 @@ export default function Home() {
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        throw new Error("生成摘要失败");
-      }
+      if (!response.ok) throw new Error("生成摘要失败");
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -57,7 +54,6 @@ export default function Home() {
     }
   };
 
-  // 第二步：生成完整解读
   const handleRequestFull = async () => {
     if (!formData) return;
     setLoading(true);
@@ -71,9 +67,7 @@ export default function Home() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error("生成解读失败");
-      }
+      if (!response.ok) throw new Error("生成解读失败");
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -96,7 +90,6 @@ export default function Home() {
     }
   };
 
-  // 重新开始
   const handleReset = () => {
     setStage("form");
     setSummary("");
@@ -105,97 +98,122 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-8 sm:px-6 sm:py-12">
-      <div className="max-w-3xl mx-auto">
-        {/* Logo 区 */}
-        <div className="text-center mb-8 animate-fade-in">
-          <div className="inline-flex items-center gap-2 mb-3">
-            <span className="text-3xl">🌙</span>
-            <h1 className="text-2xl sm:text-3xl font-bold gradient-text">
-              {siteName}
-            </h1>
-          </div>
-          <p className="text-sm text-night-300">
-            24 小时在线 · 永不评判 · 永不嫌烦
-          </p>
-        </div>
-
-        {/* 表单阶段 */}
-        {stage === "form" && (
-          <>
-            {/* Hero 介绍 */}
-            <div className="glass-card p-6 sm:p-10 mb-6 animate-fade-in">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl sm:text-4xl font-bold text-white mb-4 leading-tight">
-                  你说的每一句心事，
-                  <br />
-                  都有 AI 在认真听
-                </h2>
-                <p className="text-base sm:text-lg text-night-200 leading-relaxed max-w-2xl mx-auto">
-                  基于 AI 算法 + 心理学模型，
-                  <br />
-                  为你生成 1500+ 字<span className="gradient-text font-semibold">深度个性化情感解读</span>
-                  <br />
-                  <span className="text-sm text-night-400">
-                    不是算命，不是占卜，而是用 AI 给你一面"情感的镜子"
-                  </span>
-                </p>
+    <div className="min-h-screen">
+      {/* 表单阶段 - 编辑设计主页面 */}
+      {stage === "form" && (
+        <main className="animate-fade-in">
+          {/* 顶部导航栏 */}
+          <header className="border-b hairline">
+            <div className="container-editor-wide flex items-center justify-between py-4">
+              <div className="font-serif text-lg font-medium tracking-tight">
+                问心 AI
               </div>
-
-              {/* 信任标签 */}
-              <div className="flex flex-wrap justify-center gap-2 mb-8 text-xs">
-                <span className="pill pill-default">🤖 AI 算法驱动</span>
-                <span className="pill pill-default">🧠 心理学模型</span>
-                <span className="pill pill-default">💕 温暖共情</span>
-                <span className="pill pill-default">🔒 隐私保护</span>
+              <div className="flex items-center gap-6 text-sm text-ink-light">
+                <span className="hidden sm:inline">情感解忧 · 随时在场</span>
               </div>
-
-              {/* 表单 */}
-              <EmotionForm onSubmit={handleFormSubmit} loading={loading} />
             </div>
+          </header>
 
-            {/* 用户评价 */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-              <Testimonial
-                avatar="🌸"
-                name="小琳 · 28岁"
-                text="AI 给我的洞察让我哭了，比朋友更懂我"
-              />
-              <Testimonial
-                avatar="🌙"
-                name="阿杰 · 32岁"
-                text="看完解读突然理解了自己为什么会这样"
-              />
-              <Testimonial
-                avatar="✨"
-                name="苏苏 · 25岁"
-                text="建议很具体，本周就开始试第一条"
-              />
-            </div>
-
-            {/* 隐私说明 */}
-            <div className="text-center text-xs text-night-400 mt-8">
-              <p>
-                🛡️ 你的所有信息仅用于本次解读，不会被保存或分享
+          {/* Hero Section - 问题开场 */}
+          <section className="container-editor-wide py-16 md:py-24">
+            <div className="max-w-3xl">
+              <div className="text-sm font-mono text-ink-light uppercase tracking-wider mb-6">
+                Wenxin AI · 情感解读服务
+              </div>
+              <h1 className="font-serif text-display-md md:text-display-lg text-ink mb-6 text-balance">
+                你说的每一句心事，<br className="hidden sm:block" />
+                都有 AI 在认真听。
+              </h1>
+              <p className="text-lg md:text-xl text-ink-light leading-relaxed text-pretty max-w-2xl">
+                基于 AI 算法与心理学模型，为你生成 1500+ 字深度个性化解读。
+                不是算命，不是占卜 —— 是用 AI 给你一面情感镜子。
               </p>
             </div>
-          </>
-        )}
+          </section>
 
-        {/* 摘要阶段 */}
-        {stage === "summary" && formData && (
-          <>
-            <div className="mb-6 flex items-center justify-between">
+          {/* 表单区 - 编辑感容器 */}
+          <section className="container-editor-wide pb-16">
+            <div className="border-t hairline pt-12">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12 lg:gap-16">
+                {/* 左侧 - 表单 */}
+                <div>
+                  <EmotionForm onSubmit={handleFormSubmit} loading={loading} />
+                </div>
+
+                {/* 右侧 - 说明 */}
+                <aside className="lg:border-l lg:hairline lg:pl-12">
+                  <div className="sticky top-8">
+                    <div className="text-sm font-mono text-ink-light uppercase tracking-wider mb-4">
+                      关于这次解读
+                    </div>
+                    <h3 className="font-serif text-xl text-ink mb-4">
+                      你将获得
+                    </h3>
+                    <ul className="space-y-4 text-sm text-ink-light leading-relaxed">
+                      <li>
+                        <span className="font-serif text-base text-ink block mb-1">一份专属画像</span>
+                        AI 透过表面看到你没意识到的层面
+                      </li>
+                      <li>
+                        <span className="font-serif text-base text-ink block mb-1">深层模式洞察</span>
+                        你重复出现的心理卡点与盲点
+                      </li>
+                      <li>
+                        <span className="font-serif text-base text-ink block mb-1">可行动建议</span>
+                        3 条本周就能开始的小动作
+                      </li>
+                      <li>
+                        <span className="font-serif text-base text-ink block mb-1">温暖陪伴</span>
+                        AI 的私语，只给你看
+                      </li>
+                    </ul>
+
+                    <div className="mt-8 pt-8 border-t hairline">
+                      <div className="text-sm font-mono text-ink-light uppercase tracking-wider mb-3">
+                        隐私承诺
+                      </div>
+                      <p className="text-sm text-ink-light leading-relaxed">
+                        你的所有信息仅用于本次解读，不会被保存或分享。
+                      </p>
+                    </div>
+                  </div>
+                </aside>
+              </div>
+            </div>
+          </section>
+
+          {/* 底部 Footer */}
+          <footer className="border-t hairline mt-16">
+            <div className="container-editor-wide py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="text-sm text-ink-light">
+                © 2026 问心 AI · 基于 AI 算法 + 心理学模型
+              </div>
+              <div className="text-xs text-ink-muted">
+                本服务仅供娱乐参考和心理陪伴，不构成专业心理咨询或医疗诊断
+              </div>
+            </div>
+          </footer>
+        </main>
+      )}
+
+      {/* 摘要/完整解读阶段 */}
+      {(stage === "summary" || stage === "full") && formData && (
+        <main className="animate-fade-in">
+          <header className="border-b hairline">
+            <div className="container-editor-wide flex items-center justify-between py-4">
               <button
                 onClick={handleReset}
-                className="text-sm text-mystic-300 hover:text-mystic-200 transition"
+                className="font-serif text-lg font-medium tracking-tight hover:opacity-70 transition"
               >
-                ← 重新解读
+                问心 AI
               </button>
-              <span className="text-xs text-night-400">
-                {loading ? "AI 工作中..." : "✓ 摘要已生成"}
-              </span>
+              <div className="flex items-center gap-6 text-sm text-ink-light">
+                <span>{loading ? "AI 正在为你解读" : "✓ 解读完成"}</span>
+              </div>
             </div>
+          </header>
+
+          <section className="container-editor-wide py-12 md:py-16">
             <ResultDisplay
               summary={summary}
               fullText={fullText}
@@ -204,62 +222,15 @@ export default function Home() {
               onRequestFull={handleRequestFull}
               wechatId={wechatId}
             />
-          </>
-        )}
+          </section>
 
-        {/* 完整解读阶段 */}
-        {stage === "full" && formData && (
-          <>
-            <div className="mb-6 flex items-center justify-between">
-              <button
-                onClick={handleReset}
-                className="text-sm text-mystic-300 hover:text-mystic-200 transition"
-              >
-                ← 再做一次
-              </button>
-              <span className="text-xs text-night-400">
-                {loading ? "正在生成完整解读..." : "✓ 完成"}
-              </span>
+          <footer className="border-t hairline mt-16">
+            <div className="container-editor-wide py-8 text-center text-sm text-ink-light">
+              © 2026 问心 AI
             </div>
-            <ResultDisplay
-              summary={summary}
-              fullText={fullText}
-              loading={loading}
-              userName={formData.name}
-              onRequestFull={handleRequestFull}
-              wechatId={wechatId}
-            />
-          </>
-        )}
-
-        {/* Footer */}
-        <footer className="mt-16 text-center text-xs text-night-500">
-          <p className="mb-2">
-            © 2026 {siteName} · 基于 AI 算法 + 心理学模型
-          </p>
-          <p>
-            本服务仅供娱乐参考和心理陪伴，不构成专业心理咨询或医疗诊断
-          </p>
-        </footer>
-      </div>
-    </div>
-  );
-}
-
-function Testimonial({
-  avatar,
-  name,
-  text,
-}: {
-  avatar: string;
-  name: string;
-  text: string;
-}) {
-  return (
-    <div className="glass-card p-4 text-center">
-      <div className="text-2xl mb-2">{avatar}</div>
-      <p className="text-xs text-night-300 leading-relaxed mb-1">"{text}"</p>
-      <p className="text-xs text-night-500">{name}</p>
+          </footer>
+        </main>
+      )}
     </div>
   );
 }
