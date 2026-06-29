@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as UserInput;
 
-    if (!body.question || body.question.trim().length < 5) {
+    if (!body.currentQuestion || body.currentQuestion.trim().length < 5) {
       return new Response(
         JSON.stringify({ error: "请输入至少 5 个字的困惑描述" }),
         { status: 400, headers: { "Content-Type": "application/json" } },

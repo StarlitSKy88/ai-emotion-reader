@@ -39,6 +39,7 @@ const config: Config = {
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         serif: ['Fraunces', 'ui-serif', 'Georgia', 'serif'],
+        'instrument-serif': ['"Instrument Serif"', 'ui-serif', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
       },
       fontSize: {
