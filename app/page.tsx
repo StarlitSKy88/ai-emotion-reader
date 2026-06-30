@@ -197,20 +197,35 @@ export default function Home() {
           trailLength={30}
         />
 
-        {/* 中央装饰图（用户截图中的"Manifesto"形象） */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] z-10">
+        {/* 中央人物图片 + 装饰 */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[560px] h-[560px] z-10">
           <div className="relative w-full h-full">
-            {/* 中心装饰圆 */}
+            {/* 真实人物图（Unsplash 免费图） */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-80 h-80 rounded-full bg-gradient-to-br from-amber-900/40 to-stone-900/40 backdrop-blur-sm flex items-center justify-center">
-                <div className="w-64 h-64 rounded-full bg-gradient-to-br from-amber-800/30 to-stone-800/50 backdrop-blur-md flex items-center justify-center">
-                  {/* "Manifesto" 标签 */}
-                  <div className="bg-black/40 backdrop-blur-md border border-paper-300/30 rounded-full px-6 py-2">
-                    <span className="font-instrument-serif text-2xl italic text-paper">
-                      Manifesto
-                    </span>
-                  </div>
-                </div>
+              <div className="relative w-96 h-96 rounded-full overflow-hidden border border-paper-300/10">
+                {/* 渐变遮罩，让图片融入黑底 */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40 z-10 pointer-events-none" />
+                <img
+                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=80&auto=format&fit=crop"
+                  alt="Curious mind"
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                />
+                {/* 图片上的暖色滤镜，让色调更温暖 */}
+                <div
+                  className="absolute inset-0 z-10 mix-blend-overlay pointer-events-none"
+                  style={{
+                    background:
+                      "radial-gradient(circle at 30% 30%, rgba(217, 119, 6, 0.25), transparent 60%)",
+                  }}
+                />
+              </div>
+
+              {/* "Manifesto" 标签（叠加在图片上方） */}
+              <div className="absolute top-8 z-20 bg-black/50 backdrop-blur-md border border-paper-300/20 rounded-full px-5 py-1.5">
+                <span className="font-instrument-serif text-lg italic text-paper">
+                  Manifesto
+                </span>
               </div>
             </div>
           </div>
@@ -219,7 +234,7 @@ export default function Home() {
         {/* Hero 内容 */}
         <div className="relative z-20 container-editor-wide text-center pt-20">
           <div className="max-w-2xl mx-auto">
-            <h1 className="font-instrument-serif text-6xl md:text-8xl italic text-paper mb-12 leading-tight">
+            <h1 className="font-instrument-serif text-6xl md:text-8xl italic text-white mb-12 leading-tight drop-shadow-2xl">
               <BlurText
                 text="Built for"
                 className="inline-block"
@@ -238,26 +253,26 @@ export default function Home() {
               onSubmit={handleEmailSubmit}
               className="mb-8 max-w-md mx-auto"
             >
-              <div className="flex items-center bg-black/40 backdrop-blur-md border border-paper-300/30 rounded-full p-1.5 pl-5">
+              <div className="flex items-center bg-black/50 backdrop-blur-xl border border-paper-300/20 rounded-full p-1.5 pl-5 shadow-2xl shadow-black/50 transition focus-within:border-paper-300/40">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="flex-1 bg-transparent text-paper placeholder:text-paper-300/50 text-sm focus:outline-none"
+                  className="flex-1 bg-transparent text-white placeholder:text-paper-300/40 text-sm focus:outline-none"
                   disabled={emailSubmitted}
                 />
                 <button
                   type="submit"
                   disabled={emailSubmitted}
-                  className="w-10 h-10 rounded-full bg-paper text-black flex items-center justify-center hover:bg-paper-100 transition disabled:opacity-50"
+                  className="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center hover:bg-paper-100 hover:scale-110 transition-all duration-300 disabled:opacity-50 shadow-lg"
                 >
                   {emailSubmitted ? "✓" : "→"}
                 </button>
               </div>
             </form>
 
-            <p className="text-sm text-paper-300/80 leading-relaxed max-w-md mx-auto">
+            <p className="text-sm text-paper-300/70 leading-relaxed max-w-md mx-auto">
               Stay updated with the latest emotional insights.
               <br />
               Subscribe to our newsletter today.
