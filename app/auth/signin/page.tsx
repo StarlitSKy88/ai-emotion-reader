@@ -32,22 +32,22 @@ export default function SignInPage() {
 
   if (sent) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 py-12">
-        <div className="max-w-md w-full text-center">
-          <div className="text-sm font-mono text-ink-light uppercase tracking-wider mb-4">
+      <main className="min-h-screen bg-black flex items-center justify-center px-6 py-12">
+        <div className="max-w-md w-full bg-[#101010] rounded-2xl p-8 text-center">
+          <div className="text-sm font-mono text-gray-500 uppercase tracking-wider mb-4">
             登录
           </div>
-          <h1 className="font-serif text-display-sm mb-6 text-balance">
+          <h1 className="font-serif italic text-display-sm mb-6 text-primary text-balance">
             登录链接已发送
           </h1>
-          <p className="text-ink-light leading-relaxed mb-8">
+          <p className="leading-relaxed mb-8" style={{ color: '#E1E0CC' }}>
             请检查您的邮箱 <strong>{email}</strong>，点击邮件中的链接登录。
             <br />
-            <span className="text-sm">链接 24 小时内有效。</span>
+            <span className="text-sm text-gray-500">链接 24 小时内有效。</span>
           </p>
           <button
             onClick={() => setSent(false)}
-            className="link-editor text-ink-light text-sm"
+            className="text-primary/70 hover:text-primary text-sm transition-colors"
           >
             ← 换一个邮箱
           </button>
@@ -57,23 +57,23 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-12">
-      <div className="max-w-md w-full">
+    <main className="min-h-screen bg-black flex items-center justify-center px-6 py-12">
+      <div className="max-w-md w-full bg-[#101010] rounded-2xl p-8">
         <div className="text-center mb-10">
-          <div className="text-sm font-mono text-ink-light uppercase tracking-wider mb-3">
+          <div className="text-sm font-mono text-gray-500 uppercase tracking-wider mb-3">
             登录 / 注册
           </div>
-          <h1 className="font-serif text-display-sm mb-3">
+          <h1 className="font-serif italic text-display-sm mb-3 text-primary">
             欢迎回到 问心 AI
           </h1>
-          <p className="text-ink-light">
+          <p className="text-gray-400">
             输入您的邮箱，我们会发送一个登录链接。
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-ink mb-3">
+            <label className="block text-sm font-medium text-primary mb-3">
               邮箱地址
             </label>
             <input
@@ -95,7 +95,7 @@ export default function SignInPage() {
           </button>
         </form>
 
-        <p className="text-xs text-ink-muted text-center mt-8">
+        <p className="text-xs text-gray-500 text-center mt-8">
           我们不会向第三方分享您的邮箱。
         </p>
       </div>

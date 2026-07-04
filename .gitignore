@@ -33,3 +33,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# 参考设计目录（不属于本项目，仅作设计参考，不提交）
+lithos/
+wenxin-ai-barbiecore/
+wenxin-ai-design/

@@ -1,237 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/**
+ * 问心 AI 全局样式（V3 · Prisma 深色电影感）
+ *
+ * 设计语言：dark, moody, cinematic + warm cream
+ * 字体：Almarai（全局默认）+ Instrument Serif italic（accent）
+ */
+
+/* V3：Almarai + Instrument Serif italic */
+@import url('https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Instrument+Serif:ital@1&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --paper: #FAF8F5;
-  --paper-light: #FDFCF9;
-  --paper-card: #F5F1EA;
-  --ink: #0A0A0A;
-  --ink-light: #525252;
-  --ink-muted: #A3A3A3;
-  --border: #EDE7DC;
-  --border-strong: #DCD2C2;
-  --accent: #D97706;
-  --deep: #1A1F2E;
+/* V3 全局字体 */
+* {
+  font-family: 'Almarai', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
 }
 
 @layer base {
-  * {
-    box-sizing: border-box;
+  html, body {
+    padding: 0;
+    margin: 0;
+    background-color: #000000;
+    color: #E1E0CC;
+    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  html, body {
-    padding: 0;
-    margin: 0;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    font-feature-settings: "ss01", "cv01";
-  }
-
-  h1, h2, h3, h4 {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-  }
-
   ::selection {
-    background-color: #D97706;
-    color: white;
-  }
-}
-
-@layer components {
-  /* 编辑感强的链接下划线 */
-  .link-editor {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
-    text-decoration-color: var(--border-strong);
-    transition: text-decoration-color 0.2s ease;
-  }
-
-  .link-editor:hover {
-    text-decoration-color: var(--accent);
-  }
-
-  /* 编辑感强的容器 */
-  .container-editor {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-
-  .container-editor-wide {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-
-  /* 细线边框 */
-  .hairline {
-    border-color: var(--border);
-  }
-
-  /* 主CTA按钮 - 编辑感 */
-  .btn-editor {
-    background-color: var(--ink);
-    color: white;
-    padding: 14px 28px;
-    border-radius: 9999px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 0.9375rem;
-    transition: all 0.2s ease;
-    border: 1px solid var(--ink);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-  }
-
-  .btn-editor:hover:not(:disabled) {
-    background-color: var(--ink-light);
-    border-color: var(--ink-light);
-  }
-
-  .btn-editor:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
-  /* 次要按钮 */
-  .btn-editor-secondary {
-    background-color: transparent;
-    color: var(--ink);
-    padding: 14px 28px;
-    border-radius: 9999px;
-    font-weight: 500;
-    font-size: 0.9375rem;
-    transition: all 0.2s ease;
-    border: 1px solid var(--border-strong);
-    cursor: pointer;
-  }
-
-  .btn-editor-secondary:hover {
-    background-color: var(--paper-card);
-  }
-
-  /* 输入框 - 编辑感 */
-  .input-editor {
-    width: 100%;
-    background-color: transparent;
-    border: 1px solid var(--border-strong);
-    border-radius: 8px;
-    padding: 12px 16px;
-    color: var(--ink);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9375rem;
-    transition: border-color 0.2s ease;
-  }
-
-  .input-editor:focus {
-    outline: none;
-    border-color: var(--ink);
-  }
-
-  .input-editor::placeholder {
-    color: var(--ink-muted);
-  }
-
-  .input-editor-textarea {
-    min-height: 140px;
-    resize: vertical;
-    line-height: 1.6;
-  }
-
-  /* 标签 pill - 编辑感 */
-  .pill-editor {
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 14px;
-    border-radius: 9999px;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    user-select: none;
-    border: 1px solid var(--border-strong);
-    background-color: transparent;
-    color: var(--ink-light);
-    font-weight: 400;
-  }
-
-  .pill-editor:hover {
-    border-color: var(--ink);
-    color: var(--ink);
-  }
-
-  .pill-editor-active {
-    background-color: var(--ink);
-    color: white;
-    border-color: var(--ink);
-  }
-
-  /* 阅读正文样式 */
-  .reading-content {
-    font-family: 'Fraunces', Georgia, serif;
-    font-size: 1.125rem;
-    line-height: 1.75;
-    color: var(--ink);
-    font-weight: 400;
-  }
-
-  .reading-content p {
-    margin-bottom: 1.5rem;
-  }
-
-  .reading-content strong {
-    font-weight: 600;
-  }
-
-  /* 流式光标 */
-  .typing-cursor::after {
-    content: "▍";
-    animation: blink 1s infinite;
-    color: var(--accent);
-    margin-left: 2px;
-  }
-
-  @keyframes blink {
-    0%, 50% {
-      opacity: 1;
-    }
-    51%, 100% {
-      opacity: 0;
-    }
-  }
-
-  /* 滚动条 */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
-    border-radius: 3px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--ink-muted);
+    background-color: #DEDBC8;
+    color: #000000;
   }
 }
 
 @layer utilities {
+  /* V3：SVG 噪点纹理 - hero 视频叠加层 */
+  .noise-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* V3：SVG 噪点纹理 - Features 区背景 */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -239,4 +52,143 @@
   .text-pretty {
     text-wrap: pretty;
   }
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #212121;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #DEDBC8;
+}
+
+/* 焦点状态 */
+*:focus-visible {
+  outline: none;
+  box-shadow: inset 0 -1px 0 0 currentColor;
+}
+
+/* V2 保留：流式光标（聊天页用） */
+.typing-cursor::after {
+  content: "▍";
+  animation: blink 1s infinite;
+  color: #DEDBC8;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* V2 保留：阅读正文样式（chat 页用） */
+.reading-content {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: #E1E0CC;
+  font-weight: 400;
+}
+
+.reading-content p {
+  margin-bottom: 1.5rem;
+}
+
+.reading-content strong {
+  font-weight: 700;
+}
+
+/* V2 保留：编辑感输入框（auth/admin 页用，已切深色） */
+.input-editor {
+  width: 100%;
+  background-color: #101010;
+  border: 1px solid #212121;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #E1E0CC;
+  font-family: 'Almarai', sans-serif;
+  font-size: 0.9375rem;
+  transition: border-color 0.2s ease;
+}
+
+.input-editor:focus {
+  outline: none;
+  border-color: #DEDBC8;
+}
+
+.input-editor::placeholder {
+  color: #737373;
+}
+
+.input-editor-textarea {
+  min-height: 140px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* V2 保留：按钮（已切深色） */
+.btn-editor {
+  background-color: #DEDBC8;
+  color: #000000;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  font-family: 'Almarai', sans-serif;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  transition: all 0.2s ease;
+  border: 1px solid #DEDBC8;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.btn-editor:hover:not(:disabled) {
+  background-color: #E1E0CC;
+  border-color: #E1E0CC;
+}
+
+.btn-editor:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-editor-secondary {
+  background-color: transparent;
+  color: #DEDBC8;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.9375rem;
+  transition: all 0.2s ease;
+  border: 1px solid #212121;
+  cursor: pointer;
+}
+
+.btn-editor-secondary:hover {
+  background-color: #101010;
+  border-color: #DEDBC8;
+}
+
+/* V2 保留：极简下划线链接 */
+.link-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  text-decoration-color: rgba(225, 224, 204, 0.3);
+  transition: text-decoration-color 0.15s ease;
+}
+
+.link-underline:hover {
+  text-decoration-color: #DEDBC8;
 }

@@ -1,6 +1,18 @@
 // Prisma Schema for 问心 AI
 // 数据库：Neon PostgreSQL
 // 文档：https://pris.ly/d/prisma-schema
+//
+// ========== W-D-3 索引审查修复 ==========
+// 审查范围：DailyTask / MoodEntry / Task 高频查询字段索引补全
+// 修复内容：
+//   1. DailyTask 新增 @@index([coupleId])
+//      - 场景：dailyTask.count({ where: { coupleId } })（streakDays 计算）、
+//              dailyTask.findMany({ where: { coupleId: { in }, date } })（cron 推送）
+//      - 说明：@@unique([coupleId, date]) 复合索引虽可前缀扫描 coupleId，
+//              但单列索引可让查询规划器更稳定地选择，并降低 IN + 等值组合查询的代价
+//   2. DailyTask 时间字段为 date（非 scheduledAt），已有 @@index([date])，无需新增
+//   3. MoodEntry 已有 @@index([userId, date])，覆盖 userId 前缀查询，无需新增
+//   4. 项目中无独立 Task 模型（仅 DailyTask / TaskResponse），无需处理
 
 generator client {
   provider = "prisma-client-js"
@@ -21,8 +33,14 @@ model User {
   image         String?
   // 用户基本信息
   age           Int?
-  gender        String?
-  status        String?   // 情感状态
+  gender        String? // male / female / other
+  status        String? // 情感状态
+  // 微信小程序字段
+  openid        String?   @unique // 微信小程序 openid
+  unionid       String? // 微信 unionid
+  phone         String? // 手机号
+  avatarUrl     String? // 微信头像
+  nickname      String? // 微信昵称
   // 偏好设置
   preferences   Json      @default("{}")
   // 订阅信息
@@ -32,11 +50,21 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   // 关联
-  sessions      Session[]
-  messages      Message[]
-  actions       Action[]
-  accounts      Account[]
-  authentications Authentication[]
+  sessions          Session[]
+  messages          Message[]
+  actions           Action[]
+  accounts          Account[]
+  authentications   Authentication[]
+  // 情侣产品新关联
+  testSessions      TestSession[]
+  pairSessionsInit  PairSession[]      @relation("initiatorUser")
+  pairSessionsResp  PairSession[]      @relation("responderUser")
+  couplesA          Couple[]           @relation("coupleA")
+  couplesB          Couple[]           @relation("coupleB")
+  taskResponses     TaskResponse[]
+  shareEvents       ShareEvent[]       @relation("shareEvents")
+  pushSubscriptions PushSubscription[]
+  trackEvents       TrackEvent[]       @relation("trackEvents")
 
   @@map("users")
 }
@@ -63,14 +91,14 @@ model Account {
 }
 
 model Authentication {
-  id            String  @id @default(cuid())
-  userId        String
-  provider      String
+  id                String    @id @default(cuid())
+  userId            String
+  provider          String
   providerAccountId String
-  email         String?
-  expiresAt     DateTime?
+  email             String?
+  expiresAt         DateTime?
   // 验证码
-  code          String?
+  code              String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -90,29 +118,29 @@ model VerificationToken {
 // ==================== 对话系统 ====================
 
 model Session {
-  id          String   @id @default(cuid())
-  userId      String
-  title       String   // 对话标题（自动生成）
+  id            String    @id @default(cuid())
+  userId        String
+  title         String // 对话标题（自动生成）
   // 用户上下文（解读时的填表数据）
-  context     Json     @default("{}")
+  context       Json      @default("{}")
   // AI 自动生成的摘要
-  summary     String?
+  summary       String?
   // 关键洞察列表
-  insights    Json     @default("[]")
+  insights      Json      @default("[]")
   // 当前情绪标签
-  emotion     String?
+  emotion       String?
   // 话题标签
-  topics      Json     @default("[]")
+  topics        Json      @default("[]")
   // 状态
-  status      String   @default("active") // active / archived
+  status        String    @default("active") // active / archived
   // 时间
-  startedAt   DateTime @default(now())
-  lastMessageAt DateTime @default(now())
-  endedAt     DateTime?
+  startedAt     DateTime  @default(now())
+  lastMessageAt DateTime  @default(now())
+  endedAt       DateTime?
 
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages  Message[]
-  actions   Action[]
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages Message[]
+  actions  Action[]
 
   @@index([userId])
   @@index([status])
@@ -124,7 +152,7 @@ model Message {
   id        String   @id @default(cuid())
   sessionId String
   userId    String
-  role      String   // user / assistant
+  role      String // user / assistant
   content   String   @db.Text
   // 元数据
   metadata  Json     @default("{}")
@@ -146,29 +174,29 @@ model Message {
 // ==================== 行动系统 ====================
 
 model Action {
-  id          String   @id @default(cuid())
-  userId      String
-  sessionId   String?
+  id             String   @id @default(cuid())
+  userId         String
+  sessionId      String?
   // 行动内容
-  title       String
-  description String   @db.Text
+  title          String
+  description    String   @db.Text
   // 类别
-  category    String   // self-awareness / relationship / career / health
+  category       String // self-awareness / relationship / career / health
   // 时长
-  durationDays Int     @default(7)
+  durationDays   Int      @default(7)
   // 开始日期
-  startDate   DateTime @default(now())
+  startDate      DateTime @default(now())
   // 打卡记录（JSON 数组）
-  checkIns    Json     @default("[]")
+  checkIns       Json     @default("[]")
   // 完成率（0-1）
-  completionRate Float  @default(0)
+  completionRate Float    @default(0)
   // 状态
-  status      String   @default("active") // active / completed / abandoned
+  status         String   @default("active") // active / completed / abandoned
   // AI 反馈
-  aiFeedback  String?  @db.Text
+  aiFeedback     String?  @db.Text
   // 时间
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   session Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
@@ -196,4 +224,281 @@ model MoodEntry {
 
   @@index([userId, date])
   @@map("mood_entries")
+}
+
+// ==================== 情侣匹配测试系统 ====================
+
+// 测试会话（单人答题记录）
+model TestSession {
+  id             String    @id @default(cuid())
+  userId         String // 发起人
+  // 30 题答案 {q1: "A", q2: "B", ...}
+  answers        Json      @default("{}")
+  // 开放题随机抽中的题目 ID（1-10）
+  openQuestionId String?
+  // 开放题答案
+  openAnswer     String?   @db.Text
+  // 6 维度分数（个人）{d1: 75, d2: 60, ...}
+  dimensions     Json      @default("{}")
+  // 性别（决定题库版本）
+  gender         String // male / female
+  // 题库版本（用于版本兼容性判断，旧 answers 升级时需 migrate）
+  bankVersion    String? // "v2-2026-07"
+  // 时间
+  createdAt      DateTime  @default(now())
+  completedAt    DateTime?
+
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pairSessionsInit PairSession[] @relation("initiator")
+  pairSessionsResp PairSession[] @relation("responder")
+
+  @@index([userId])
+  @@index([gender])
+  @@map("test_sessions")
+}
+
+// 配对会话（A+B 双方配对关系，核心）
+model PairSession {
+  id                      String    @id @default(cuid())
+  // 双方测试会话
+  initiatorId             String    @unique // A 的 TestSession ID（@unique 防止 A 用同一份答题邀请多人）
+  responderId             String // B 的 TestSession ID
+  // 双方用户（可选，支持用户注销后保留匿名配对数据用于统计）
+  initiatorUserId         String?
+  responderUserId         String?
+  // 配对状态
+  status                  String    @default("pending") // pending / completed / expired
+  // 性别组合（决定类型库）
+  genderCombo             String // male-female / male-male / female-female
+  // 合并后的 6 维度分数
+  dimensionsA             Json      @default("{}") // A 的维度分
+  dimensionsB             Json      @default("{}") // B 的维度分
+  compatibility           Int? // 默契度 0-100
+  // 类型匹配结果
+  matchedTypeId           String? // 关联到 CoupleType（onDelete: SetNull）
+  matchedTypeCode         String? // 冗余字段，便于快速查询
+  alternatives            Json      @default("[]") // 备选类型 2 个
+  // AI 解读
+  summary                 String?   @db.Text
+  // 解锁状态
+  unlocked                Boolean   @default(false)
+  unlockMethod            String? // pay / ad
+  // 结果分享状态
+  resultSharedToInitiator Boolean   @default(false) // B 是否已分享给 A
+  // 时间
+  createdAt               DateTime  @default(now())
+  completedAt             DateTime?
+
+  initiator     TestSession  @relation("initiator", fields: [initiatorId], references: [id], onDelete: Restrict)
+  responder     TestSession  @relation("responder", fields: [responderId], references: [id], onDelete: Restrict)
+  initiatorUser User?        @relation("initiatorUser", fields: [initiatorUserId], references: [id], onDelete: SetNull)
+  responderUser User?        @relation("responderUser", fields: [responderUserId], references: [id], onDelete: SetNull)
+  coupleType    CoupleType?  @relation(fields: [matchedTypeId], references: [id], onDelete: SetNull)
+  couple        Couple?
+  shareEvents   ShareEvent[]
+
+  @@index([initiatorUserId])
+  @@index([responderUserId])
+  @@index([status, createdAt])
+  @@index([genderCombo])
+  @@index([matchedTypeId])
+  @@map("pair_sessions")
+}
+
+// 情侣类型库（65 种：30 常见 + 5 稀有 + 15 男男 + 15 女女）
+model CoupleType {
+  id              String   @id @default(cuid())
+  code            String   @unique // OLD_COUPLE / KITE_LINE / MM_MIRROR / FF_VINE ...
+  name            String // 「烟火余生型」
+  emoji           String // 🎆
+  rarity          String   @default("common") // common / rare
+  genderCombo     String   @default("male-female") // male-female / male-male / female-female
+  estimatedRatio  Float // 0.18 = 18%
+  oneLiner        String // 一句话
+  description     String   @db.Text // 详细解读
+  hiddenRisks     String   @db.Text // 隐藏短板
+  growthAdvice    String   @db.Text // 成长建议
+  shareCopy       String // 朋友圈分享文案
+  radarProfile    Json // 雷达图特征
+  attachmentCombo String // "S×S" / "A×D" / ...
+  conflictPattern String // "repair" / "pursue-pursue" / ...
+  stage           String // "stable" / "honeymoon" / ...
+  marketingAngle  String? // 营销定位（稀有类型用）
+  isPublic        Boolean  @default(true) // 是否在公共类型百科展示（同性专属=false）
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  pairSessions PairSession[]
+  couples      Couple[]
+
+  @@index([genderCombo])
+  @@index([isPublic])
+  @@index([rarity])
+  @@map("couple_types")
+}
+
+// Couple 关系表（配对成功后创建，用于每日任务）
+// 约定：partnerAId < partnerBId（字典序），应用层强制保证，避免同一对情侣重复存储
+model Couple {
+  id                String    @id @default(cuid())
+  pairSessionId     String    @unique // 关联到配对会话
+  partnerAId        String?
+  partnerBId        String?
+  coupleTypeId      String? // 关联到 CoupleType（onDelete: SetNull，类型下架时不阻塞）
+  relationshipStart DateTime?
+  stage             String    @default("dating") // dating / engaged / married / ltr
+  status            String    @default("active") // active / paused / ended
+  profile           Json      @default("{}") // 共同档案（纪念日、偏好等）
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  pairSession PairSession @relation(fields: [pairSessionId], references: [id], onDelete: Restrict)
+  partnerA    User?       @relation("coupleA", fields: [partnerAId], references: [id], onDelete: SetNull)
+  partnerB    User?       @relation("coupleB", fields: [partnerBId], references: [id], onDelete: SetNull)
+  coupleType  CoupleType? @relation(fields: [coupleTypeId], references: [id], onDelete: SetNull)
+  dailyTasks  DailyTask[]
+
+  @@index([partnerAId])
+  @@index([partnerBId])
+  @@index([coupleTypeId])
+  @@index([status])
+  @@map("couples")
+}
+
+// 每日任务
+model DailyTask {
+  id              String   @id @default(cuid())
+  coupleId        String
+  date            DateTime @db.Date // 纯日期（不带时间），避免跨时区情侣日期错位
+  timezone        String   @default("Asia/Shanghai") // 任务所属时区，确保双方本地日历对齐
+  title           String
+  description     String   @db.Text
+  difficulty      String   @default("medium") // easy / medium / hard
+  sourceDimension String // D1-D6，任务来源于哪个维度
+  targetDimension String? // D1-D6，任务目标改善哪个维度
+  estimatedMin    Int      @default(3) // 预计完成分钟
+  statusA         String   @default("pending") // pending / done / skipped
+  statusB         String   @default("pending")
+  aiSummary       String?  @db.Text // 双方完成后的 AI 默契度总结
+  createdAt       DateTime @default(now())
+
+  couple    Couple         @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  responses TaskResponse[]
+
+  @@unique([coupleId, date])
+  @@index([date]) // 跨 couple 的全局每日任务调度查询
+  @@index([coupleId]) // W-D-3 修复：count/findMany by coupleId 走索引，避免全表扫描
+  @@map("daily_tasks")
+}
+
+// 任务回应（双方各自提交）
+model TaskResponse {
+  id          String   @id @default(cuid())
+  taskId      String
+  userId      String?
+  content     String   @db.Text
+  emotionTag  String? // AI 命名的情绪标签
+  perspective String?  @db.Text // AI 生成的视角解读
+  mediaUrls   Json     @default("[]") // 图片 URL 数组，最多 3 张
+  createdAt   DateTime @default(now())
+
+  task DailyTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([taskId])
+  @@index([userId, createdAt])
+  // W-1 修复：防止同一用户对同一任务并发提交产生 2 条 TaskResponse
+  // userId 可空（用户注销后置 null），PostgreSQL partial unique 允许多个 null 共存
+  @@unique([taskId, userId])
+  @@map("task_responses")
+}
+
+// ==================== 分享事件追踪 ====================
+
+// 分享事件追踪（计算分享率指标用）
+model ShareEvent {
+  id            String   @id @default(cuid())
+  pairSessionId String
+  sharerUserId  String? // 分享者（B 或 A），用户注销后置 null 保留事件
+  // utm 来源追踪
+  utmSource     String   @default("unknown") // share_card / moments / wechat
+  utmMedium     String   @default("unknown") // miniapp / web
+  utmCampaign   String   @default("default") // result_share / type_encyclopedia
+  // 卡片变体（炫耀/自嘲/求助/神秘）
+  variant       String   @default("mystery") // boast / selfmock / helpseek / mystery
+  // 时间
+  createdAt     DateTime @default(now())
+
+  pairSession PairSession @relation(fields: [pairSessionId], references: [id], onDelete: Cascade)
+  sharer      User?       @relation("shareEvents", fields: [sharerUserId], references: [id], onDelete: SetNull)
+
+  @@index([pairSessionId, createdAt])
+  @@index([utmSource])
+  @@map("share_events")
+}
+
+// ==================== 订阅消息推送（Phase 4.5） ====================
+
+// 微信小程序订阅消息订阅记录
+// 微信订阅消息为「一次性订阅」模式：用户每次授权订阅 = 1 次推送配额，推送一次消耗 1 次
+model PushSubscription {
+  id         String   @id @default(cuid())
+  userId     String
+  /**
+   * 微信订阅消息模板 ID
+   */
+  templateId String
+  /**
+   * 订阅场景：daily_task（每日任务提醒）/ task_summary（双方完成总结）
+   */
+  scene      String   @default("daily_task")
+  /**
+   * 剩余可推送次数（每次订阅 +1，每次推送 -1）
+   */
+  count      Int      @default(1)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, templateId, scene])
+  @@index([userId, scene])
+  @@map("push_subscriptions")
+}
+
+// ==================== 通用埋点事件（Phase 6.6） ====================
+
+// 通用埋点事件（计算转化漏斗 / 留存曲线用）
+// 与 ShareEvent 区别：ShareEvent 专门记录分享动作（带 utm），TrackEvent 记录所有关键行为
+//
+// V2 优化（W-6）：数据过期机制说明
+// TrackEvent 表无 TTL，会无限增长。当前数据库为 Neon PostgreSQL，不支持原生 TTL
+// （PlanetScale/MySQL 的 @db.Ttl 也不适用 Prisma + Postgres 组合）。
+// V2 处理方案（任选其一，落地时按需选择）：
+//   方案 A（推荐）：cron 清理脚本，定期删除 createdAt 早于 90 天的记录
+//     - 在 scripts/ 下新增 cleanup-track-events.ts
+//     - 调用 prisma.trackEvent.deleteMany({ where: { createdAt: { lt: ninetyDaysAgo } } })
+//     - 配合 Vercel Cron / 外部调度，每日凌晨执行一次
+//   方案 B：Neon 的 scheduled data lifecycle（如官方推出类似功能，可改为表级 TTL）
+//   方案 C：分区表（按月分区 created_at），旧分区直接 DROP，性能优于 DELETE
+// 暂不在此 schema 中加 @db.Ttl（Prisma 不支持 Postgres TTL，会引发 schema 校验错误）。
+model TrackEvent {
+  id        String   @id @default(cuid())
+  userId    String?  // 匿名用户为 null（如落地页访问）
+  // 事件名（命名规范：object_action，如 page_view / test_start / task_complete）
+  event     String
+  // 事件属性（JSON：{ page, taskId, pairSessionId, plan, ... }）
+  props     Json?
+  // 来源场景（miniapp / web / api / unknown）
+  // V2 优化（W-5）：由 /api/track 路由 detectSource 动态识别写入，不再固定 miniapp
+  source    String   @default("miniapp")
+  // 时间
+  createdAt DateTime @default(now())
+
+  user User? @relation("trackEvents", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([event, createdAt])
+  @@index([userId, createdAt])
+  @@index([source, createdAt])
+  @@map("track_events")
 }

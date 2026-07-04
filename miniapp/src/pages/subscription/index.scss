@@ -1,0 +1,194 @@
+.subscription {
+  min-height: 100vh;
+  padding: 32rpx 24rpx 64rpx;
+  background: #000000;
+  box-sizing: border-box;
+}
+
+.sub-header {
+  text-align: center;
+  margin-bottom: 40rpx;
+
+  .sub-title {
+    display: block;
+    font-size: 40rpx;
+    font-weight: 600;
+    color: #E1E0CC;
+    margin-bottom: 12rpx;
+  }
+
+  .sub-subtitle {
+    display: block;
+    font-size: 26rpx;
+    color: #A3A3A3;
+  }
+}
+
+.sub-status-card {
+  background: #101010;
+  border: 1rpx solid #212121;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 40rpx;
+  text-align: center;
+
+  .status-badge {
+    display: inline-block;
+    padding: 6rpx 20rpx;
+    border-radius: 999rpx;
+    font-size: 22rpx;
+    margin-bottom: 16rpx;
+
+    &.active {
+      background: #DEDBC8;
+      color: #000000;
+    }
+    &.expired {
+      background: #212121;
+      color: #737373;
+    }
+    &.none {
+      background: #212121;
+      color: #A3A3A3;
+    }
+  }
+
+  .status-plan {
+    display: block;
+    font-size: 32rpx;
+    font-weight: 600;
+    color: #E1E0CC;
+    margin-bottom: 8rpx;
+  }
+
+  .status-expire {
+    display: block;
+    font-size: 24rpx;
+    color: #A3A3A3;
+  }
+}
+
+.plans {
+  margin-bottom: 40rpx;
+
+  .plan-card {
+    background: #101010;
+    border-radius: 24rpx;
+    padding: 32rpx;
+    margin-bottom: 24rpx;
+    border: 2rpx solid transparent;
+    transition: border-color 0.2s;
+    position: relative;
+
+    &.recommend {
+      border-color: #DEDBC8;
+      background: #212121;
+    }
+
+    .recommend-tag {
+      position: absolute;
+      top: -14rpx;
+      right: 24rpx;
+      background: #DEDBC8;
+      color: #000000;
+      font-size: 20rpx;
+      padding: 4rpx 16rpx;
+      border-radius: 999rpx;
+    }
+
+    .plan-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16rpx;
+
+      .plan-name {
+        font-size: 32rpx;
+        font-weight: 600;
+        color: #E1E0CC;
+      }
+
+      .plan-price {
+        font-size: 36rpx;
+        color: #DEDBC8;
+        font-weight: 600;
+
+        .plan-unit {
+          font-size: 22rpx;
+          color: #A3A3A3;
+          font-weight: 400;
+        }
+      }
+    }
+
+    .plan-desc {
+      font-size: 26rpx;
+      color: #A3A3A3;
+      margin-bottom: 24rpx;
+    }
+
+    .plan-features {
+      margin-bottom: 24rpx;
+      .feature-item {
+        font-size: 24rpx;
+        color: #A3A3A3;
+        line-height: 1.8;
+        &::before {
+          content: '✓';
+          color: #DEDBC8;
+          margin-right: 12rpx;
+        }
+      }
+    }
+
+    .plan-cta {
+      width: 100%;
+      height: 80rpx;
+      line-height: 80rpx;
+      background: #DEDBC8;
+      color: #000000;
+      border-radius: 16rpx;
+      font-size: 28rpx;
+      font-weight: 500;
+      text-align: center;
+      border: none;
+
+      &.btn-current {
+        background: #212121;
+        color: #737373;
+      }
+      &.btn-secondary {
+        background: transparent;
+        color: #DEDBC8;
+        border: 2rpx solid #DEDBC8;
+      }
+    }
+  }
+}
+
+.sub-footer {
+  text-align: center;
+  margin-top: 32rpx;
+
+  .sub-tip {
+    display: block;
+    font-size: 22rpx;
+    color: #737373;
+    line-height: 1.8;
+  }
+
+  .sub-cancel {
+    display: inline-block;
+    margin-top: 16rpx;
+    font-size: 24rpx;
+    color: #A3A3A3;
+    text-decoration: underline;
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 80rpx 0;
+  color: #737373;
+  font-size: 26rpx;
+}

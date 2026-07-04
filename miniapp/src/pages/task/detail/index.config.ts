@@ -1,0 +1,4 @@
+export default {
+  navigationBarTitleText: '任务详情',
+  enableShareAppMessage: true,
+};

@@ -70,13 +70,16 @@ const SUMMARY_SYSTEM_PROMPT = `你是「问心 AI」，一位温暖、共情的 
 async function streamOpenAI(
   systemPrompt: string,
   userPrompt: string,
-  maxTokens: number
+  maxTokens: number,
+  temperature: number = 0.85,
 ): Promise<AsyncIterable<string>> {
-  console.log(`[OpenAI] POST ${config.baseURL}/chat/completions, max_tokens=${maxTokens}`);
+  // B-PQ-1 修复：叙事场景 temperature=0.85（情绪摘要/分析），避免 vendor 默认 1.0 输出飘忽
+  console.log(`[OpenAI] POST ${config.baseURL}/chat/completions, max_tokens=${maxTokens}, temperature=${temperature}`);
 
   const openaiStream = await openaiClient.chat.completions.create({
     model: config.model,
     max_tokens: maxTokens,
+    temperature,
     stream: true,
     messages: [
       { role: "system", content: systemPrompt },
@@ -150,10 +153,12 @@ async function streamOpenAI(
 async function streamAnthropic(
   systemPrompt: string,
   userPrompt: string,
-  maxTokens: number
+  maxTokens: number,
+  temperature: number = 0.85,
 ): Promise<AsyncIterable<string>> {
+  // B-PQ-1 修复：叙事场景 temperature=0.85，与 streamOpenAI 对齐
   const url = `${config.baseURL.replace(/\/$/, "")}/v1/messages`;
-  console.log(`[Anthropic] POST ${url}, max_tokens=${maxTokens}`);
+  console.log(`[Anthropic] POST ${url}, max_tokens=${maxTokens}, temperature=${temperature}`);
 
   const response = await fetch(url, {
     method: "POST",
@@ -166,6 +171,7 @@ async function streamAnthropic(
     body: JSON.stringify({
       model: config.model,
       max_tokens: maxTokens,
+      temperature,
       system: systemPrompt,
       messages: [{ role: "user", content: userPrompt }],
       stream: true,
@@ -242,6 +248,67 @@ export async function streamSummary(
   return useAnthropicProtocol
     ? streamAnthropic(SUMMARY_SYSTEM_PROMPT, prompt, 1024)
     : streamOpenAI(SUMMARY_SYSTEM_PROMPT, prompt, 1024);
+}
+
+/**
+ * 非流式聊天补全（用于开放题分析等需要完整 JSON 响应的场景）
+ *
+ * 自动适配 OpenAI / Anthropic 协议，返回完整的文本内容。
+ */
+export async function chatCompletion(
+  systemPrompt: string,
+  userPrompt: string,
+  maxTokens: number,
+  temperature: number = 0.6,
+): Promise<string> {
+  // B-PQ-1 修复：JSON 结构化场景 temperature=0.6（开放题分析），降低输出随机性确保结构稳定
+  if (useAnthropicProtocol) {
+    const url = `${config.baseURL.replace(/\/$/, "")}/v1/messages`;
+    console.log(`[Anthropic] POST ${url} (non-stream), max_tokens=${maxTokens}, temperature=${temperature}`);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Api-Key": config.apiKey,
+        Authorization: `Bearer ${config.apiKey}`,
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: config.model,
+        max_tokens: maxTokens,
+        temperature,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userPrompt }],
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`MiniMax/Anthropic API 错误 [${response.status}]: ${errorText}`);
+    }
+
+    const data = (await response.json()) as {
+      content?: Array<{ type: string; text?: string }>;
+    };
+    const text = data.content
+      ?.map((block) => (block.type === "text" ? block.text || "" : ""))
+      .join("") || "";
+    return text;
+  }
+
+  // OpenAI 协议非流式
+  console.log(`[OpenAI] POST ${config.baseURL}/chat/completions (non-stream), max_tokens=${maxTokens}, temperature=${temperature}`);
+  const completion = await openaiClient.chat.completions.create({
+    model: config.model,
+    max_tokens: maxTokens,
+    temperature,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+  });
+  return completion.choices?.[0]?.message?.content || "";
 }
 
 export const currentLLMConfig = {

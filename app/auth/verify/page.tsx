@@ -15,20 +15,20 @@ export default function VerifyPage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-12">
-      <div className="max-w-md w-full text-center">
-        <div className="text-sm font-mono text-ink-light uppercase tracking-wider mb-3">
+    <main className="min-h-screen bg-black flex items-center justify-center px-6 py-12">
+      <div className="max-w-md w-full bg-[#101010] rounded-2xl p-8 text-center">
+        <div className="text-sm font-mono text-gray-500 uppercase tracking-wider mb-3">
           验证邮箱
         </div>
-        <h1 className="font-serif text-display-sm mb-4">
+        <h1 className="font-serif italic text-display-sm mb-4 text-primary">
           请检查您的邮箱
         </h1>
-        <p className="text-ink-light leading-relaxed mb-8">
+        <p className="leading-relaxed mb-8" style={{ color: '#E1E0CC' }}>
           我们刚刚向您的邮箱发送了一封登录邮件。
           <br />
           点击邮件中的链接即可完成登录。
         </p>
-        <p className="text-sm text-ink-muted">
+        <p className="text-sm text-gray-500">
           3 秒后自动跳转…
         </p>
       </div>

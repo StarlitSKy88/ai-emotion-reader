@@ -91,7 +91,7 @@ export async function POST(
       const session = await prisma.session.findUnique({
         where: { id: params.id },
       });
-      userContext = (session?.context as UserInput) || ({} as UserInput);
+      userContext = (session?.context as unknown as UserInput) || ({} as UserInput);
     }
 
     // 构建对话 prompt（带历史）

@@ -1,262 +1,162 @@
-# 🌙 问心 AI - 情感解读工具
+# 问心 AI · 情侣关系成长工具
 
-> 基于 MiniMax-M3 大模型驱动的个性化情感解读工具，温暖、共情、永不评判。
-> 一行配置切换任何 OpenAI 兼容的大模型。
+> 基于心理学模型的情侣关系成长工具。每日 3 分钟任务 + 6 维度关系类型 + 7/30 天成长报告。
 
----
-
-## ✨ 核心特性
-
-- 🤖 **MiniMax-M3 驱动** - 国内大模型，国内访问快、中文能力强
-- 📜 **1500+ 字深度报告** - 现状画像 + 深层洞察 + 可执行建议
-- 🌊 **流式输出** - 实时显示 AI 输出，体验流畅
-- 🎣 **内置引流钩子** - 免费摘要 + 完整版解锁 + 微信引导
-- 📱 **移动端优先** - 完美适配手机访问
-- 🎨 **暗色调玄学风** - 神秘、温暖、专业
-- 🔄 **一键切换模型** - 支持 DeepSeek/Kimi/GLM/Qwen 等任何 OpenAI 兼容 API
+问心 AI 不是单次情感解读工具，而是一个面向情侣的长期关系成长系统：通过 6 维度匹配测试定位双方的关系类型，再用每日微行动和周期性成长报告推动关系持续成长。涵盖测试、配对、任务、报告、订阅、危机保护、官网与埋点看板等 Phase 0-6 共 120 个原子点。
 
 ---
 
-## 🚀 快速开始
+## 核心功能
 
-### 1. 安装依赖
+### 1. 情侣匹配测试
+- 男女各 30 题，覆盖 6 大维度：依恋、沟通、冲突修复、共同意义、信任承诺、亲密激情
+- 基于 6 维度得分组合出 65 种关系类型（CoupleType）
+- 含开放题，由 LLM 进行叙事分析
+- 测试题库与评分逻辑跨端共享，Web 与小程序结果一致
 
-```bash
-cd /Users/opc-1/ai-emotion-reader
-npm install
-```
+### 2. 双方配对机制
+- A 用户发起邀请，生成邀请码 / 邀请链接
+- B 用户加入后双方各自完成测试
+- 仅当双方均提交后才生成统一的关系类型结果
+- 结果支持分享卡片与小程序码回流
 
-### 2. 配置环境变量
+### 3. 每日任务
+- 基于 7 维权重动态生成（依恋 / 沟通 / 冲突 / 意义 / 信任 / 亲密 + 默契度）
+- 每日 3 分钟微行动，双方各自回应
+- AI 生成默契度总结，标注分歧与共识
+- 支持微信订阅消息推送提醒
 
-```bash
-cp .env.local.example .env.local
-```
+### 4. 成长报告
+- 7 天报告（免费层可见摘要）
+- 30 天报告（付费层解锁完整叙事）
+- 采用 LLM 叙事缓存，避免重复请求与超长上下文
+- 报告包含趋势曲线、关键事件、下一阶段建议
 
-编辑 `.env.local`，**只填一行 API Key** 就能跑：
+### 5. 订阅系统
+- 月度订阅：¥39 / 月
+- 年度订阅：¥298 / 年（省 ¥170）
+- 一次性购买，到期后需手动续费，不会自动扣款
+- 基于微信支付 V3，订阅状态写入数据库并由 JWT 校验
 
-```env
-LLM_API_KEY=你的_MiniMax-M3_API_Key
-```
+### 6. 危机用户保护
+- 三档检测：低风险提示、中风险引导自助资源、高风险直接给出心理热线
+- 在测试、任务、报告多个触点嵌入检测
+- 高危机情况下阻断继续引导付费，强制转向专业求助
 
-> 🔑 没有 API Key？去 https://api.minimaxi.com 注册获取（新用户有免费额度）
+### 7. Web 官网
+- 落地页：产品介绍 + 功能展示 + 小程序码
+- SEO 三件套：sitemap.ts / robots.ts / JSON-LD 结构化数据
+- 旧路由 301 归档（在 next.config.js 配置），避免外链失效
+- Admin 数据看板（鉴权访问）
 
-### 3. 启动开发服务器
-
-```bash
-npm run dev
-```
-
-打开 http://localhost:3000 即可看到效果。
-
-### 4. 构建生产版本
-
-```bash
-npm run build
-npm run start
-```
-
----
-
-## 🌐 部署到 EdgeOne Pages（推荐，30 分钟上线）
-
-### 准备工作
-
-1. 在 [GitHub](https://github.com) 创建账号并创建新仓库
-2. 在 [EdgeOne Pages](https://console.cloud.tencent.com/edgeone/pages) 注册腾讯云账号
-
-### 部署步骤
-
-```bash
-# 1. 初始化 Git 并推送到 GitHub
-cd /Users/opc-1/ai-emotion-reader
-git init
-git add .
-git commit -m "feat: 问心 AI 情感解读工具 (MiniMax-M3)"
-git remote add origin https://github.com/你的用户名/ai-emotion-reader.git
-git push -u origin main
-```
-
-然后在 EdgeOne Pages 控制台：
-
-1. 点击 **「新建项目」** → **「导入 Git 仓库」**
-2. 选择刚才创建的 GitHub 仓库
-3. 配置构建设置：
-   - **框架预设**：Next.js
-   - **构建命令**：`npm run build`
-   - **输出目录**：`.next`
-   - **安装命令**：`npm install`
-4. 在 **「环境变量」** 添加：
-   ```
-   LLM_API_KEY = 你的_API_Key
-   LLM_BASE_URL = https://api.minimaxi.com/v1
-   LLM_MODEL = MiniMax-M3
-   NEXT_PUBLIC_SITE_NAME = 问心 AI
-   NEXT_PUBLIC_WECHAT_ID = 你的微信号
-   ```
-5. 点击 **「部署」**，等待 2-3 分钟
-
-部署成功后会得到一个 `*.pages.dev` 的免费域名。
-
-### 自动部署
-
-后续每次 push 代码，EdgeOne Pages 会自动部署新版本。
+### 8. 埋点看板
+- 转化漏斗：访问 → 测试 → 配对 → 订阅
+- 留存曲线：次日 / 7 日 / 30 日留存
+- Admin 鉴权 + 数据脱敏，仅内部团队可见
 
 ---
 
-## 🔄 切换其他模型
+## 技术栈
 
-只需修改 `.env.local` 中注释掉的部分，例如切换到 DeepSeek：
-
-```env
-# 注释掉 MiniMax-M3
-# LLM_API_KEY=minimax_key
-
-# 启用 DeepSeek
-LLM_PROVIDER=deepseek
-LLM_API_KEY=sk-你的_deepseek_key
-LLM_BASE_URL=https://api.deepseek.com
-LLM_MODEL=deepseek-chat
-```
-
-**支持的模型**（任何 OpenAI 兼容 API）：
-
-| 模型 | 速度 | 成本 | 中文能力 | 推荐场景 |
-|------|------|------|---------|---------|
-| **MiniMax-M3** | ⭐⭐⭐⭐ | 💰 | ⭐⭐⭐⭐⭐ | 情感解读（默认）|
-| DeepSeek V3 | ⭐⭐⭐⭐ | 💰 | ⭐⭐⭐⭐⭐ | 高质量低成本 |
-| Kimi | ⭐⭐⭐ | 💰💰 | ⭐⭐⭐⭐⭐ | 长文本 |
-| GLM-4 | ⭐⭐⭐⭐ | 💰 | ⭐⭐⭐⭐ | 通用 |
-| Qwen | ⭐⭐⭐⭐ | 💰 | ⭐⭐⭐⭐ | 通用 |
-| GPT-4 | ⭐⭐ | 💰💰💰 | ⭐⭐⭐⭐ | 顶级质量 |
+- **Next.js 14 App Router**：Web 官网 + API 后端同站部署
+- **Taro 4**：微信小程序前端，独立打包，复用 shared 层
+- **Prisma 6 + Neon Postgres**：Serverless Postgres，schema 即文档
+- **MiniMax-M3**：默认 LLM，通过 OpenAI 兼容协议接入，可切换 DeepSeek / Kimi / GLM / Qwen
+- **微信小程序登录 + JWT**：客户端拿 code，服务端换 openid 并签发 JWT
+- **微信支付 V3**：订阅服务下单、回调、续费状态同步
 
 ---
 
-## 📁 项目结构
+## 项目结构
 
 ```
 ai-emotion-reader/
-├── app/
-│   ├── layout.tsx              # 根布局
-│   ├── page.tsx                # 首页（表单+结果）
-│   ├── globals.css             # 全局样式（暗色调玄学风）
-│   └── api/
-│       ├── analyze/route.ts    # 完整解读 API（流式）
-│       └── summary/route.ts    # 免费摘要 API（流式）
-├── components/
-│   ├── EmotionForm.tsx         # 用户输入表单
-│   └── ResultDisplay.tsx       # 结果展示（含引流钩子）
-├── lib/
-│   ├── llm.ts                  # 统一 LLM 客户端（OpenAI 兼容）
-│   └── prompts.ts              # 精心设计的 Prompt 模板
-├── .env.local.example          # 环境变量模板（含多模型示例）
-├── tailwind.config.ts          # 暗色调主题配置
-└── package.json
+├── app/                    # Next.js App Router
+│   ├── page.tsx            # 官网落地页（Phase 6.1）
+│   ├── layout.tsx          # 根 layout + SEO metadata + JSON-LD
+│   ├── sitemap.ts          # SEO sitemap
+│   ├── robots.ts           # SEO robots
+│   ├── admin/dashboard/    # Admin 数据看板（Phase 6.7/6.8）
+│   └── api/                # API 路由
+│       ├── auth/           # 微信登录 + JWT
+│       ├── test/           # 测试题库 + 提交
+│       ├── pair/           # 双方配对
+│       ├── task/           # 每日任务
+│       ├── report/         # 成长报告
+│       ├── subscription/   # 订阅支付
+│       ├── push/           # 订阅消息推送
+│       ├── track/          # 埋点上报
+│       ├── admin/          # 漏斗 + 留存 API
+│       ├── qrcode/         # 小程序码生成
+│       └── upload/         # 图片上传
+├── components/             # 旧组件（已废弃，待清理）
+├── lib/                    # 服务端 lib（auth/llm/prisma/prompts/wechat-* 等）
+├── shared/                 # 跨端共用（types/test-bank-*/couple-types-*/scoring/classify-*）
+├── miniapp/                # Taro 小程序前端
+│   └── src/
+│       ├── pages/          # 11 个页面（index/test/invite/result/tasks/task/chat/profile/subscription/crisis/type）
+│       ├── components/     # RadarChart + ShareCanvas
+│       └── lib/            # request/auth/share/track/utm/ad
+├── prisma/                 # Prisma schema + seed
+├── docs/                   # 技术文档（TECH_PLAN/COUPLE_TYPES/TEST_QUESTIONS 等）
+├── CLAUDE.md               # 复利工程经验固化（56+ 条）
+├── DEPLOY.md               # EdgeOne Pages 部署指南
+└── next.config.js          # 301 旧路由归档
 ```
 
 ---
 
-## 🎯 商业模式
+## 快速开始
 
-### 4 档产品设计
+```bash
+# 1. 安装依赖
+npm install
+cd miniapp && npm install && cd ..
 
-| 产品 | 价格 | 包含 |
+# 2. 配置环境变量
+cp .env.local.example .env.local
+# 编辑 .env.local 填入 LLM_API_KEY / DATABASE_URL / WECHAT_MINIAPP_APPID 等
+
+# 3. 数据库
+npx prisma db push
+npx prisma db seed  # 种子 65 种 CoupleType
+
+# 4. 启动 Web 官网 + API
+npm run dev  # http://localhost:3000
+
+# 5. 启动小程序（另一个终端）
+cd miniapp
+npm run dev:weapp  # 用微信开发者工具打开 miniapp/ 目录
+```
+
+---
+
+## 定价
+
+| 产品 | 价格 | 说明 |
 |------|------|------|
-| 免费体验 | ¥0 | 300 字 AI 摘要 |
-| 入门款 | ¥198 | 1500 字解读 + 基础手链 |
-| 进阶款 | ¥498 | 1500 字解读 + 定制手链 + 30 天陪伴 |
-| 高端款 | ¥1999 | 1v1 咨询 + 多款定制 + 90 天陪伴 |
-| 旗舰款 | ¥9999 | 全年私人顾问（限 10 名）|
+| 月度订阅 | ¥39 / 月 | 到期手动续费，不自动扣款 |
+| 年度订阅 | ¥298 / 年 | 省 ¥170，到期手动续费 |
 
-### 流量路径
-
-```
-[公域引流]              [私域沉淀]            [成交转化]
-小红书笔记   ─┐
-视频号视频   ─┼→ 微信个人号 ─→  AI 解读服务
-朋友圈分享   ─┤              ↘  配套手链
-熟人推荐     ─┘
-```
+订阅为一次性购买，不会自动续费。微信支付 V3 下单，支付成功后回调写入订阅状态。
 
 ---
 
-## 🛠 技术栈
+## 部署
 
-- **Next.js 14** - React 全栈框架（App Router）
-- **TypeScript** - 类型安全
-- **Tailwind CSS** - 快速美化
-- **OpenAI SDK** - 兼容 MiniMax-M3 / DeepSeek / Kimi 等
-- **Edge Runtime** - 全球低延迟
-- **EdgeOne Pages** - 国内 CDN 免费部署
+- **Web + API**：EdgeOne Pages，构建命令 `npm run build`，输出目录 `.next`，详细步骤见 [DEPLOY.md](./DEPLOY.md)
+- **小程序**：在 `miniapp/` 执行 `npm run build:weapp`，用微信开发者工具上传，提交后台审核
+- **数据库**：Neon Postgres，连接串配置在 `DATABASE_URL`，使用 `npx prisma db push` 同步 schema
+- **环境变量**：在 EdgeOne Pages 控制台填入 `LLM_API_KEY` / `DATABASE_URL` / `WECHAT_MINIAPP_APPID` / `WECHAT_MINIAPP_SECRET` / `WECHAT_PAY_*` 等
 
 ---
 
-## ⚠️ 合规提醒
+## 项目地址
 
-- ❌ 不要使用"算命"、"占卜"、"转运"等敏感词
-- ❌ 不要做"绝对化"承诺
-- ❌ 不要宣称"医疗"、"宗教"效果
-- ✅ 用"AI 心理学"、"情感分析"、"个性化解读"包装
-- ✅ 在所有 AI 输出结尾加"仅供娱乐参考"声明
-- ✅ 遇到严重心理危机，引导用户寻求专业帮助
+- GitHub: https://github.com/StarlitSKy88/ai-emotion-reader
 
 ---
 
-## 💰 成本估算（MiniMax-M3）
+## License
 
-### 启动成本
-
-| 项目 | 费用 |
-|------|------|
-| MiniMax-M3 API（首批 1000 次）| 极低（具体见 MiniMax 官网）|
-| EdgeOne Pages 部署 | 免费 |
-| 域名（可选）| ~¥60/年 |
-| **总计** | **< ¥100** |
-
-### 单次成本估算（按 2000 tokens 输出）
-
-- 输入 ~1500 tokens
-- 输出 ~2000 tokens
-- **单次完整解读成本**：约 ¥0.1-0.3（远低于 Claude）
-
-### 收入预测
-
-- 客单价 ¥198，毛利率 > 95%
-- 月服务 100 个客户 = ¥19,750+ 净利润
-- 月服务 500 个客户 = ¥98,750+ 净利润
-
----
-
-## 🎨 定制指南
-
-### 修改主题色
-
-编辑 `tailwind.config.ts` 中的 `mystic` 和 `night` 颜色配置。
-
-### 修改 Prompt
-
-编辑 `lib/prompts.ts`：
-
-- `buildFullPrompt()` - 完整解读风格
-- `buildSummaryPrompt()` - 摘要风格
-- `SYSTEM_PROMPT` (在 llm.ts 中) - AI 角色定义
-
-### 修改微信引流文案
-
-编辑 `components/ResultDisplay.tsx` 中的微信卡片部分。
-
----
-
-## 📞 联系作者
-
-- 项目作者：问心先生
-- 项目地址：`/Users/opc-1/ai-emotion-reader`
-
----
-
-## 📄 License
-
-MIT - 自由使用、修改、商用
-
----
-
-*🌙 愿每个被生活困住的人，都能找到一个愿意认真倾听的对象。*
+MIT - 自由使用、修改、商用。

@@ -1,0 +1,19 @@
+{
+  "miniprogramRoot": "./dist",
+  "projectname": "wenxin-ai",
+  "description": "问心 AI 情侣匹配测试",
+  "appid": "REPLACE_WITH_YOUR_APPID",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "enhance": false,
+    "compileHotReLoad": false,
+    "postcss": false,
+    "minified": false,
+    "bigPackageSizeSupport": true
+  },
+  "compileType": "miniprogram",
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "condition": {}
+}

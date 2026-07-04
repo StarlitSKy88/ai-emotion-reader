@@ -1,0 +1,166 @@
+.type-detail {
+  padding: 32rpx;
+  min-height: 100vh;
+
+  &.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32rpx;
+  }
+}
+
+/* 顶部类型卡 */
+.type-card {
+  text-align: center;
+  padding: 48rpx 32rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.type-card.rare {
+  background: #101010;
+  border: 2rpx solid #FFD700;
+}
+
+.type-emoji {
+  display: block;
+  font-size: 120rpx;
+  line-height: 1.2;
+  margin-bottom: 16rpx;
+}
+
+.type-name {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #DEDBC8;
+  margin-bottom: 16rpx;
+}
+
+.type-badges {
+  display: flex;
+  justify-content: center;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+}
+
+.type-rarity {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #737373;
+  padding: 4rpx 16rpx;
+  background: #212121;
+  border-radius: 12rpx;
+}
+
+.type-card.rare .type-rarity {
+  color: #FFD700;
+  background: #212121;
+}
+
+.type-exclusive {
+  display: inline-block;
+  font-size: 22rpx;
+  color: #000000;
+  background: #DEDBC8;
+  padding: 4rpx 16rpx;
+  border-radius: 12rpx;
+}
+
+.type-oneliner {
+  display: block;
+  font-size: 28rpx;
+  color: #A3A3A3;
+  line-height: 1.7;
+  margin-bottom: 16rpx;
+}
+
+.type-ratio {
+  display: block;
+  font-size: 24rpx;
+  color: #737373;
+}
+
+/* 内容区段 */
+.section-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #E1E0CC;
+  margin-bottom: 16rpx;
+}
+
+.section-text {
+  display: block;
+  font-size: 28rpx;
+  line-height: 1.8;
+  color: #E1E0CC;
+}
+
+.share-copy {
+  color: #DEDBC8;
+  font-style: italic;
+  margin-bottom: 24rpx;
+}
+
+/* 雷达图卡 */
+.radar-card {
+  text-align: center;
+}
+
+.radar-tip {
+  display: block;
+  font-size: 22rpx;
+  color: #737373;
+  margin-top: 16rpx;
+}
+
+/* 同性专属类型限制提示卡 */
+.restricted-card {
+  text-align: center;
+  padding: 48rpx 32rpx;
+  background: #101010;
+  border: 2rpx solid #DEDBC8;
+}
+
+.restricted-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #DEDBC8;
+  margin-bottom: 16rpx;
+}
+
+.restricted-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #A3A3A3;
+  line-height: 1.7;
+}
+
+/* CTA 卡 */
+.cta-card {
+  text-align: center;
+}
+
+.card-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #E1E0CC;
+  margin-bottom: 16rpx;
+}
+
+.card-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #A3A3A3;
+  line-height: 1.7;
+  margin-bottom: 32rpx;
+}
+
+.mt {
+  margin-top: 16rpx;
+}
