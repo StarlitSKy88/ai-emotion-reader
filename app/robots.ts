@@ -6,7 +6,7 @@
  */
 import type { MetadataRoute } from 'next';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wenxin.ai';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wenxin.taomyst.com';
 
 export default function robots(): MetadataRoute.Robots {
   return {

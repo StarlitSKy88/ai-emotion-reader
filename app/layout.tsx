@@ -8,7 +8,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wenxin.ai';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wenxin.taomyst.com';
 const SITE_NAME = '问心 AI';
 const SITE_DESCRIPTION =
   '基于心理学模型的情侣关系成长工具。每日 3 分钟任务 + 6 维度关系类型 + 7/30 天成长报告。¥39/月 ¥298/年订阅。';
