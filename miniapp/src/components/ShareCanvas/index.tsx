@@ -55,8 +55,8 @@ export interface ShareCanvasProps {
 const CANVAS_WIDTH = 600; // 设计稿宽
 // W-SH-1：原 900 + 160 给底部小程序码（120）+ 引导文字（20）+ 上下边距（20）
 const CANVAS_HEIGHT = 1060; // 设计稿高
-const COLOR_A = '#E8657E';
-const COLOR_B = '#4A90E2';
+const COLOR_A = '#DEDBC8';
+const COLOR_B = '#7A7660';
 const DIMENSIONS = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'] as const;
 const DIM_LABELS: Record<string, string> = {
   D1: '依恋',
@@ -307,7 +307,7 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
       ctx.setFontSize(36);
       ctx.setTextAlign('center');
       ctx.setTextBaseline('middle');
-      ctx.fillText('❤', centerX, avatarY);
+      ctx.fillText('·', centerX, avatarY);
 
       // 5. 昵称（头像下方）
       ctx.setFillStyle('#333333');
@@ -318,11 +318,11 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
       ctx.fillText(partnerNickname || 'TA', centerX + avatarOffsetX, avatarY + avatarR + 36);
 
       // 6. 类型 emoji（大）
-      // W-1：同性组合用通用 ❤ 替代类型 emoji，避免类型识别
+      // W-1：同性组合用通用符号替代,避免类型识别
       ctx.setFontSize(96);
       ctx.setTextAlign('center');
       ctx.setTextBaseline('middle');
-      ctx.fillText(isSameSex ? '❤' : typeEmoji, centerX, 320);
+      if (!isSameSex && typeEmoji) { ctx.fillText(typeEmoji, centerX, 320); }
 
       // 7. 类型名（同性组合不显示，只显示一句话）
       ctx.setTextBaseline('alphabetic');
@@ -452,7 +452,7 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
     try {
       tempPath = await draw();
     } catch (e) {
-      Taro.showToast({ title: (e as Error).message || '生成图片失败', icon: 'none' });
+      Taro.showToast({ title: (e as Error).message || '保存图片失败', icon: 'none' });
       return;
     }
 

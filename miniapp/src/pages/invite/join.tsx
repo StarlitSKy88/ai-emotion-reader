@@ -83,7 +83,7 @@ export default function JoinPage() {
 
   const inviterName = info?.inviterNickname || 'TA';
   const avatarUrl =
-    info?.inviterAvatar || 'https://via.placeholder.com/120';
+    info?.inviterAvatar || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
   const onlySelfPath =
     info?.hasExistingPair === true || info?.isSelf === true;
 

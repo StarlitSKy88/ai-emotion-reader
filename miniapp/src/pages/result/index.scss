@@ -103,12 +103,12 @@
 }
 
 .legend-pink {
-  color: #E8657E;
+  color: #DEDBC8;
   font-weight: 600;
 }
 
 .legend-blue {
-  color: #4A90E2;
+  color: #7A7660;
   font-weight: 600;
 }
 
@@ -125,10 +125,10 @@
   border: 2rpx solid #FFD700;
 }
 
-.type-emoji {
-  display: block;
-  font-size: 120rpx;
-  line-height: 1.2;
+.type-visual-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 16rpx;
 }
 
@@ -399,8 +399,14 @@
 }
 
 .suggestion-item {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
   font-size: 26rpx;
   line-height: 1.8;
   color: #E1E0CC;
+}
+
+.suggestion-text {
+  flex: 1;
 }

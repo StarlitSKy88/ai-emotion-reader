@@ -4,6 +4,7 @@ import Taro, { useDidShow, usePullDownRefresh, useShareAppMessage } from '@taroj
 import { http } from '@/lib/request';
 import { isLoggedIn } from '@/lib/auth';
 import { trackPageView } from '@/lib/track';
+import Icon from '@/components/Icon';
 import type { DailyTaskInfo } from '@shared/types';
 import './index.scss';
 
@@ -170,8 +171,15 @@ export default function Index() {
     <View className='home'>
       {/* Hero 区 */}
       <View className='hero'>
-        <Text className='hero-title'>问心 AI</Text>
-        <Text className='hero-subtitle'>两个人，三十题，看见你们的关系</Text>
+        <View className='hero-bg' />
+        <View className='hero-noise' />
+        <View className='hero-content'>
+          <Text className='hero-eyebrow'>情感关系 · 深度测试</Text>
+          <Text className='hero-title'>问心</Text>
+          <Text className='hero-subtitle'>
+            两个人，三十题，<Text className='serif'>看见</Text>你们的关系
+          </Text>
+        </View>
       </View>
 
       {/* 首次加载失败：重试入口 */}
@@ -188,6 +196,7 @@ export default function Index() {
       {/* 核心钩子：开始测试（未配对且加载完成时显示） */}
       {!loading && !loadError && !pair && (
         <View className='card hero-card'>
+          <Text className='card-eyebrow'>开始</Text>
           <Text className='card-title'>3 分钟情侣匹配测试</Text>
           <Text className='card-desc'>
             男女各 30 题 · 6 维度心理学评估 · 65 种类型结果
@@ -199,6 +208,7 @@ export default function Index() {
       {/* 已配对：状态卡片（无论 pending/completed 都跳结果页查看具体进度） */}
       {!loading && !loadError && pair && (
         <View className='card hero-card status-card'>
+          <Text className='card-eyebrow'>进度</Text>
           <Text className='card-title'>
             {pair.status === 'completed'
               ? pair.resultSharedToInitiator
@@ -228,28 +238,32 @@ export default function Index() {
           </View>
           <Text className='task-card-title'>{todayTask.title}</Text>
           <View className='task-card-status'>
-            <Text className={todayTask.myStatus === 'done' ? 'done' : 'pending'}>
-              我 {todayTask.myStatus === 'done' ? '✓' : '○'}
-            </Text>
-            <Text className={todayTask.partnerStatus === 'done' ? 'done' : 'pending'}>
-              TA {todayTask.partnerStatus === 'done' ? '✓' : '○'}
-            </Text>
-            <Text className='card-link text-primary'>去做 →</Text>
+            <View className={`status-item ${todayTask.myStatus === 'done' ? 'done' : ''}`}>
+              <Text>我</Text>
+              <Icon name={todayTask.myStatus === 'done' ? 'check' : 'circle'} size={28} color={todayTask.myStatus === 'done' ? '#DEDBC8' : '#737373'} />
+            </View>
+            <View className={`status-item ${todayTask.partnerStatus === 'done' ? 'done' : ''}`}>
+              <Text>TA</Text>
+              <Icon name={todayTask.partnerStatus === 'done' ? 'check' : 'circle'} size={28} color={todayTask.partnerStatus === 'done' ? '#DEDBC8' : '#737373'} />
+            </View>
+            <Text className='card-link'>去做 <Icon name='arrow-right' size={24} color='#DEDBC8' /></Text>
           </View>
         </View>
       )}
 
       {/* 类型百科入口 */}
       <View className='card type-encyclopedia-card' onClick={viewEncyclopedia}>
+        <Text className='card-eyebrow'>探索</Text>
         <Text className='card-title'>35 种情侣类型</Text>
         <Text className='card-desc text-muted'>
           烟火余生型 · 双子星型 · 灯塔与舟型 · ...
         </Text>
-        <Text className='card-link text-primary'>查看类型百科 →</Text>
+        <Text className='card-link'>查看类型百科 <Icon name='arrow-right' size={24} color='#DEDBC8' /></Text>
       </View>
 
       <View className='footer'>
-        <Text className='text-muted'>问心 AI · 让爱被看见</Text>
+        <Text>问心 AI · 让爱被看见</Text>
+        <Text className='footer-meta'>2026 · 内测中</Text>
       </View>
     </View>
   );

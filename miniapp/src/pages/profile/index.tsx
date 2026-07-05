@@ -153,7 +153,7 @@ export default function ProfilePage() {
           <View className='user-info'>
             <Image
               className='avatar'
-              src={user.avatarUrl || 'https://via.placeholder.com/120'}
+              src={user.avatarUrl || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='}
               mode='aspectFill'
             />
             <View className='user-meta'>
@@ -180,7 +180,7 @@ export default function ProfilePage() {
           <Text className='section-title'>我的关系</Text>
           {pair ? (
             <View className='pair-info'>
-              <Text className='pair-emoji'>{pair.coupleTypeEmoji || '💑'}</Text>
+              {pair.coupleTypeEmoji ? <Text className='pair-emoji'>{pair.coupleTypeEmoji}</Text> : null}
               <View className='pair-meta'>
                 <Text className='pair-type'>
                   {pair.coupleTypeName ? `「${pair.coupleTypeName}」` : '已配对'}

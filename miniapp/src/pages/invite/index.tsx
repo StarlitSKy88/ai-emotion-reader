@@ -120,7 +120,7 @@ export default function InvitePage() {
           {pair?.status === 'completed'
             // W-WC-2 修复：原「TA 已答完，去分享解锁你们的关系类型」违反微信运营规范，改为温和措辞
             ? 'TA 已答完，等 TA 把结果发给你就能看到你们的关系类型'
-            : '把邀请分享给 TA，等 TA 也答完才能生成你们的关系类型'}
+            : '把邀请分享给 TA，等 TA 也答完才能看到你们的关系类型'}
         </Text>
         {pair?.status === 'pending' && (
           <>
@@ -151,7 +151,7 @@ export default function InvitePage() {
         <Text className='card-desc text-muted'>
           - 你和 TA 各自答 30 题，互相看不到对方答案
           {'\n'}- TA 答完后主动分享，你才能看到结果
-          {'\n'}- 结果生成 65 种情侣类型中匹配你们的一种
+          {'\n'}- 结果匹配 65 种情侣类型中的一种
         </Text>
       </View>
     </View>

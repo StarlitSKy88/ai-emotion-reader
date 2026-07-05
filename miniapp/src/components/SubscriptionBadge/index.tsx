@@ -19,7 +19,6 @@ export default function SubscriptionBadge({
   if (!isSubscribed) return null;
   return (
     <View className='subscription-badge'>
-      <Text className='badge-heart'>♥</Text>
       <Text className='badge-text'>已订阅 · 全部解锁</Text>
     </View>
   );

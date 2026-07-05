@@ -201,7 +201,7 @@ export default function SubscriptionPage() {
           <View className='plan-features'>
             <Text className='feature-item'>去除所有广告,体验更沉浸</Text>
             <Text className='feature-item'>basic + deep 内容全部解锁</Text>
-            <Text className='feature-item'>30 天每日任务 + 多维度分析报告</Text>
+            <Text className='feature-item'>30 天每日任务 + 多维度解读报告</Text>
             <Text className='feature-item'>专属订阅徽章标识</Text>
           </View>
           <Button

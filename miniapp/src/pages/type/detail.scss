@@ -24,10 +24,10 @@
   border: 2rpx solid #FFD700;
 }
 
-.type-emoji {
-  display: block;
-  font-size: 120rpx;
-  line-height: 1.2;
+.type-visual-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 16rpx;
 }
 

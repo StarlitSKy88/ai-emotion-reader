@@ -17,6 +17,7 @@ import { getGenderCombo } from '@shared/gender-combo';
 import { getPronounStyle, replacePronounInBank } from '@shared/pronoun';
 import type { Gender, Question, OptionLabel, Answers } from '@shared/types';
 import { http } from '@/lib/request';
+import { isLoggedIn, silentLogin } from '@/lib/auth';
 import './index.scss';
 
 const STORAGE_KEY = 'test_progress_v2';
@@ -195,6 +196,16 @@ export default function TestPage() {
     }
     setSubmitting(true);
     try {
+      // 确保登录态:app.tsx 启动时的 silentLogin 是异步无 await,
+      // 用户答完题提交时可能仍未拿到 token,此处兜底重试一次
+      if (!isLoggedIn()) {
+        const token = await silentLogin();
+        if (!token) {
+          Taro.showToast({ title: '登录失败,请重试', icon: 'none' });
+          return;
+        }
+      }
+
       const res = await http.post<SubmitResponse>('/api/test/submit', {
         gender: progress.gender,
         bankVersion: bank?.version,
@@ -249,7 +260,7 @@ export default function TestPage() {
         </View>
         <View className='card'>
           <Text className='card-desc text-muted'>
-            65 种类型覆盖异性、男男、女女三种组合，结果只在双方都答完后生成
+            65 种类型覆盖异性、男男、女女三种组合，结果只在双方都答完后揭晓
           </Text>
         </View>
       </View>
@@ -263,7 +274,7 @@ export default function TestPage() {
     <View className='test'>
       {/* 进度条 + 切换性别入口 */}
       <View className='progress-wrap'>
-        <Progress percent={percent} strokeWidth={6} activeColor='#E8657E' />
+        <Progress percent={percent} strokeWidth={6} activeColor='#DEDBC8' />
         <Text className='progress-text'>
           {answeredCount} / {total}
         </Text>
@@ -317,7 +328,7 @@ export default function TestPage() {
           <Text className='q-stem'>{OPEN_QUESTION.stem}</Text>
           <Textarea
             className='open-input'
-            placeholder='在这里写下你的真实想法（至少 10 字）'
+            placeholder='写下你此刻最真实的想法（至少 10 字）'
             maxlength={300}
             value={progress.openAnswer}
             onInput={(e) => updateOpenAnswer(e.detail.value)}

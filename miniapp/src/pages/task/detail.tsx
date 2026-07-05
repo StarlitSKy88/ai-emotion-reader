@@ -2,7 +2,7 @@
  * 任务详情页 · Phase 4.4.2 + 4.4.5
  * - 显示任务完整详情 + 双方回应
  * - 我未完成 → 「开始写感受」按钮跳 task/chat
- * - 双方都完成 → 显示 AI 总结横幅（调 /api/task/[taskId]/summary）
+ * - 双方都完成 → 显示默契度总结横幅（调 /api/task/[taskId]/summary）
  */
 import { useState } from 'react';
 import { View, Text, Button, Image } from '@tarojs/components';
@@ -12,7 +12,7 @@ import type {
   DailyTaskInfo,
   TaskSummaryResult,
 } from '@shared/types';
-import './index.scss';
+import './detail.scss';
 
 export default function TaskDetailPage() {
   const router = useRouter();
@@ -192,12 +192,12 @@ export default function TaskDetailPage() {
         )}
       </View>
 
-      {/* AI 总结横幅（双方完成后显示） */}
+      {/* 默契度总结横幅(双方完成后显示) */}
       {bothDone && (
         <View className='card summary-banner'>
           <Text className='summary-title'>今日默契度</Text>
           {loadingSummary ? (
-            <Text className='text-muted'>AI 正在生成总结...</Text>
+            <Text className='text-muted'>正在生成默契度总结...</Text>
           ) : summary ? (
             <View className='summary-content'>
               <Text className='compat-score'>{summary.compatibility}</Text>
@@ -221,7 +221,7 @@ export default function TaskDetailPage() {
               )}
             </View>
           ) : (
-            <Text className='text-muted'>总结生成失败，稍后再试</Text>
+            <Text className='text-muted'>总结加载失败，稍后再试</Text>
           )}
         </View>
       )}

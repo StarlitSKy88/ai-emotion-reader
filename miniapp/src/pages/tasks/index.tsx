@@ -17,6 +17,7 @@ import Taro, { useDidShow } from '@tarojs/taro';
 import { http } from '@/lib/request';
 import { isLoggedIn } from '@/lib/auth';
 import { trackPageView, trackTaskView } from '@/lib/track';
+import Icon from '@/components/Icon';
 import type {
   DailyTaskInfo,
   TaskDifficulty,
@@ -158,9 +159,11 @@ export default function TasksPage() {
           </View>
           <View className='summary-divider' />
           <View className='summary-item'>
-            <Text className='summary-num'>
-              {bothDone ? '✓' : `${task.estimatedMin}'`}
-            </Text>
+            {bothDone ? (
+              <Icon name='check' size={48} color='#DEDBC8' />
+            ) : (
+              <Text className='summary-num'>{task.estimatedMin}'</Text>
+            )}
             <Text className='summary-label'>
               {bothDone ? '双方完成' : '预计分钟'}
             </Text>
@@ -178,21 +181,47 @@ export default function TasksPage() {
         <Text className='task-desc'>{task.description}</Text>
         <View className='task-footer'>
           <View className='done-status'>
-            <Text className={task.myStatus === 'done' ? 'done' : task.myStatus === 'skipped' ? 'skipped' : 'pending'}>
-              我:{task.myStatus === 'done' ? '✓' : task.myStatus === 'skipped' ? '—' : '○'}
-            </Text>
-            <Text className={task.partnerStatus === 'done' ? 'done' : task.partnerStatus === 'skipped' ? 'skipped' : 'pending'}>
-              TA:{task.partnerStatus === 'done' ? '✓' : task.partnerStatus === 'skipped' ? '—' : '○'}
-            </Text>
+            <View
+              className={task.myStatus === 'done' ? 'done' : task.myStatus === 'skipped' ? 'skipped' : 'pending'}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8rpx' }}
+            >
+              <Text>我:</Text>
+              {task.myStatus === 'done' ? (
+                <Icon name='check' size={28} color='#DEDBC8' />
+              ) : task.myStatus === 'skipped' ? (
+                <Text>—</Text>
+              ) : (
+                <Icon name='circle' size={28} color='#737373' />
+              )}
+            </View>
+            <View
+              className={task.partnerStatus === 'done' ? 'done' : task.partnerStatus === 'skipped' ? 'skipped' : 'pending'}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8rpx' }}
+            >
+              <Text>TA:</Text>
+              {task.partnerStatus === 'done' ? (
+                <Icon name='check' size={28} color='#DEDBC8' />
+              ) : task.partnerStatus === 'skipped' ? (
+                <Text>—</Text>
+              ) : (
+                <Icon name='circle' size={28} color='#737373' />
+              )}
+            </View>
           </View>
-          <Text className='task-link text-primary'>查看详情 →</Text>
+          <View className='task-link text-primary' style={{ display: 'inline-flex', alignItems: 'center', gap: '4rpx' }}>
+            <Text>查看详情</Text>
+            <Icon name='arrow-right' size={24} color='#DEDBC8' />
+          </View>
         </View>
 
-        {/* AI 总结横幅(双方完成后显示) */}
+        {/* 默契度总结横幅(双方完成后显示) */}
         {bothDone && task.aiSummary && (
           <View className='insight-banner'>
-            <Text className='insight-title'>今日默契度已生成</Text>
-            <Text className='insight-text'>点详情查看共鸣点与互补点 →</Text>
+            <Text className='insight-title'>今日默契度已就绪</Text>
+            <View className='insight-text' style={{ display: 'flex', alignItems: 'center', gap: '4rpx' }}>
+              <Text>点详情查看共鸣点与互补点</Text>
+              <Icon name='arrow-right' size={24} color='#DEDBC8' />
+            </View>
           </View>
         )}
       </View>

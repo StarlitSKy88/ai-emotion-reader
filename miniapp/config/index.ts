@@ -1,6 +1,7 @@
 import { defineConfig } from '@tarojs/cli';
 import devConfig from './dev';
 import prodConfig from './prod';
+import path from 'path';
 
 export default defineConfig(async (merge, { command, mode }) => {
   const baseConfig = {
@@ -20,7 +21,19 @@ export default defineConfig(async (merge, { command, mode }) => {
     framework: 'react',
     compiler: 'webpack5',
     cache: { enable: false },
+    // 路径别名(与 tsconfig.paths 对齐,Taro alias 不带尾部 /)
+    alias: {
+      '@': path.resolve(__dirname, '..', 'src'),
+      '@shared': path.resolve(__dirname, '..', '..', 'shared'),
+    },
     mini: {
+      // 让 webpack 把 shared/ 目录的 TS 文件当作源码走 babel-loader
+      // 否则 ModuleParseError: import type 语法无法解析
+      compile: {
+        include: [
+          path.resolve(__dirname, '..', '..', 'shared'),
+        ],
+      },
       postcss: {
         pxtransform: { enable: true, config: {} },
         cssModules: {

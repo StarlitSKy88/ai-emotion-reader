@@ -7,10 +7,11 @@ import './app.scss';
 function App({ children }: PropsWithChildren<Record<string, unknown>>) {
   useLaunch((options) => {
     console.log('问心 AI 小程序启动');
-    // 启动时检查登录态，未登录则静默登录
+    // 启动时检查登录态，未登录则静默登录(异步,不阻塞启动)
+    // 关键路径(test 提交等)会自行兜底检查 isLoggedIn + silentLogin
     const token = Taro.getStorageSync('token');
     if (!token) {
-      silentLogin();
+      silentLogin().catch((e) => console.error('启动静默登录失败:', e));
     }
     // 扫码进入处理（小程序码 scene 参数在 options.query.scene）
     const redirect = handleScanEntry({

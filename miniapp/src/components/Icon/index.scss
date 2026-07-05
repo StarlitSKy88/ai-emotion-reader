@@ -1,0 +1,13 @@
+/**
+ * Icon 组件样式
+ * 外层 View 用 inline-block + vertical-align: middle,
+ * 让图标可以和文字基线对齐。
+ */
+.icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.icon-image {
+  display: block;
+}

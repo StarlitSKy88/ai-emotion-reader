@@ -81,10 +81,11 @@
   gap: 20rpx;
 }
 
-.card-emoji {
-  font-size: 56rpx;
+.card-visual {
   flex-shrink: 0;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-meta {

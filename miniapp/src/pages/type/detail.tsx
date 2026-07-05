@@ -13,6 +13,7 @@ import { View, Text, Button } from '@tarojs/components';
 import Taro, { useRouter, useShareAppMessage } from '@tarojs/taro';
 import { getCoupleTypeByCode } from '@shared/couple-types-all';
 import RadarChart from '@/components/RadarChart';
+import TypeVisual from '@/components/TypeVisual';
 import './detail.scss';
 
 export default function TypeDetailPage() {
@@ -67,7 +68,9 @@ export default function TypeDetailPage() {
     <View className='type-detail'>
       {/* 顶部类型卡 */}
       <View className={`card type-card ${isRare ? 'rare' : ''}`}>
-        <Text className='type-emoji'>{typeInfo.emoji}</Text>
+        <View className='type-visual-wrap'>
+          <TypeVisual code={typeInfo.code} radarProfile={typeInfo.radarProfile} rarity={typeInfo.rarity} size={320} />
+        </View>
         <Text className='type-name'>{typeInfo.name}</Text>
         <View className='type-badges'>
           <Text className='type-rarity'>

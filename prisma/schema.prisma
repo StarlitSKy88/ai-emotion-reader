@@ -15,7 +15,10 @@
 //   4. 项目中无独立 Task 模型（仅 DailyTask / TaskResponse），无需处理
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // EdgeOne 部署环境是 rhel-openssl-1.1.x,本地 macOS 是 native
+  // 同时生成两份引擎,避免生产环境找不到 Query Engine
+  binaryTargets = ["native", "rhel-openssl-1.1.x", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

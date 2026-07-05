@@ -35,6 +35,11 @@ function getToken(): string {
   return Taro.getStorageSync('token') || '';
 }
 
+/** 跳转到登录页(tabbar 页必须用 switchTab,不能用 navigateTo) */
+function goToLogin() {
+  Taro.switchTab({ url: '/pages/profile/index' });
+}
+
 /** 通用请求函数 */
 export async function request<T = unknown>(options: RequestOptions): Promise<T> {
   const { url, method = 'GET', data, requireAuth = true } = options;
@@ -46,8 +51,7 @@ export async function request<T = unknown>(options: RequestOptions): Promise<T> 
   if (requireAuth) {
     const token = getToken();
     if (!token) {
-      // 跳转登录
-      Taro.navigateTo({ url: '/pages/profile/index' });
+      goToLogin();
       throw new Error('未登录');
     }
     header['Authorization'] = `Bearer ${token}`;
@@ -63,7 +67,7 @@ export async function request<T = unknown>(options: RequestOptions): Promise<T> 
   // HTTP 状态码处理
   if (res.statusCode === 401) {
     Taro.removeStorageSync('token');
-    Taro.navigateTo({ url: '/pages/profile/index' });
+    goToLogin();
     throw new Error('登录已过期，请重新登录');
   }
 

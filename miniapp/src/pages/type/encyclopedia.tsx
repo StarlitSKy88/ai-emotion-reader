@@ -17,6 +17,7 @@ import { View, Text, Input } from '@tarojs/components';
 import Taro, { useShareAppMessage } from '@tarojs/taro';
 import { HETERO_COUPLE_TYPES } from '@shared/couple-types-hetero';
 import type { CoupleTypeInfo } from '@shared/types';
+import TypeVisual from '@/components/TypeVisual';
 import './encyclopedia.scss';
 
 export default function EncyclopediaPage() {
@@ -72,7 +73,9 @@ export default function EncyclopediaPage() {
       onClick={() => goDetail(t.code)}
     >
       <View className='card-header'>
-        <Text className='card-emoji'>{t.emoji}</Text>
+        <View className='card-visual'>
+          <TypeVisual code={t.code} radarProfile={t.radarProfile} rarity={t.rarity} size={120} />
+        </View>
         <View className='card-meta'>
           <Text className='card-name'>{t.name}</Text>
           <Text className='card-oneliner'>{t.oneLiner}</Text>

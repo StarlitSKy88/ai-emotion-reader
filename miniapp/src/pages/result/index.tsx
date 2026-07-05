@@ -19,6 +19,8 @@ import { View, Text, Button, Image } from '@tarojs/components';
 import Taro, { useDidShow, useShareAppMessage, useRouter } from '@tarojs/taro';
 import { http } from '@/lib/request';
 import RadarChart from '@/components/RadarChart';
+import TypeVisual from '@/components/TypeVisual';
+import Icon from '@/components/Icon';
 import ShareCanvas, { type ShareCanvasHandle } from '@/components/ShareCanvas';
 import SubscriptionBadge from '@/components/SubscriptionBadge';
 import { pickShareVariant } from '@shared/share-variants';
@@ -244,7 +246,7 @@ export default function ResultPage() {
         // ad.ts 中 UnlockResultData 仅声明字段子集,这里安全转换为页面 ResultData
         setData(result.data as unknown as ResultData);
         Taro.showToast({
-          title: tier === 'basic' ? '已解锁结果' : '已解锁深度分析',
+          title: '已解锁深度解读',
           icon: 'success',
         });
       } else if (!result.success && result.method === 'ad') {
@@ -393,7 +395,7 @@ export default function ResultPage() {
   const showDeep = isSubscribed || deepUnlocked;
   const adEnabled = isAdEnabled();
   const basicCtaText = adEnabled ? '看广告解锁结果' : '解锁结果';
-  const deepCtaText = adEnabled ? '看广告解锁深度分析' : '解锁深度分析';
+  const deepCtaText = adEnabled ? '看广告解锁深度解读' : '解锁深度解读';
 
   // 雷达图分数:优先用双方实际维度分,A 缺失时回退到类型典型特征
   const radarScoresA = data.dimensionsA || data.matched.radarProfile;
@@ -442,7 +444,7 @@ export default function ResultPage() {
           <View className='couple-side'>
             <Image
               className='couple-avatar'
-              src={data.myAvatar || 'https://via.placeholder.com/120'}
+              src={data.myAvatar || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='}
               mode='aspectFill'
             />
             <Text className='couple-name'>
@@ -451,13 +453,13 @@ export default function ResultPage() {
           </View>
           <View className='couple-link'>
             <View className='couple-line' />
-            <Text className='couple-heart'>❤</Text>
+            <Icon name='dot' size={16} color='#DEDBC8' />
             <View className='couple-line' />
           </View>
           <View className='couple-side'>
             <Image
               className='couple-avatar'
-              src={data.partnerAvatar || 'https://via.placeholder.com/120'}
+              src={data.partnerAvatar || 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='}
               mode='aspectFill'
             />
             <Text className='couple-name'>
@@ -470,7 +472,13 @@ export default function ResultPage() {
       {/* 类型卡(basic 锁定时整体模糊) */}
       <View className={`card type-card ${data.matched.rarity === 'rare' ? 'rare' : ''} ${showBasic ? '' : 'locked'}`}>
         <View className='type-content'>
-          <Text className='type-emoji'>{showBasic ? data.matched.emoji : '🔒'}</Text>
+          {showBasic ? (
+            <View className='type-visual-wrap'>
+              <TypeVisual code={data.matched.code} radarProfile={data.matched.radarProfile! as { D1: number; D2: number; D3: number; D4: number; D5: number; D6: number }} rarity={data.matched.rarity} size={320} />
+            </View>
+          ) : (
+            <Icon name='lock' size={64} color='#DEDBC8' />
+          )}
           <Text className='type-name'>{showBasic ? data.matched.name : '???'}</Text>
           <Text className='type-rarity'>
             {showBasic
@@ -503,7 +511,7 @@ export default function ResultPage() {
               </View>
               {data.summary && (
                 <View className='detail-section'>
-                  <Text className='detail-title'>AI 关系总结</Text>
+                  <Text className='detail-title'>关系总结</Text>
                   <Text className='detail-text'>{data.summary}</Text>
                 </View>
               )}
@@ -529,7 +537,7 @@ export default function ResultPage() {
         {/* deep 锁定:仅覆盖深度内容区 */}
         {showBasic && !showDeep && (
           <View className='lock-overlay deep-lock'>
-            <Text className='lock-hint'>多维度分析 + 30 天报告</Text>
+            <Text className='lock-hint'>多维度解读 + 30 天报告</Text>
             <Button
               className='btn-primary lock-cta'
               loading={unlocking === 'deep'}
@@ -545,7 +553,7 @@ export default function ResultPage() {
       {/* V3 多维度分析(deep 解锁后显示) */}
       {showDeep && data.multiDimAnalysis && (
         <View className='card multi-dim-card'>
-          <Text className='section-title'>多维度深度分析</Text>
+          <Text className='section-title'>多维度解读</Text>
           <View className='multi-dim-overview'>
             <Text className='multi-dim-label'>总览</Text>
             <Text className='multi-dim-text'>{data.multiDimAnalysis.overview}</Text>
@@ -565,7 +573,10 @@ export default function ResultPage() {
             <View className='multi-dim-suggestions'>
               <Text className='multi-dim-label'>行动建议</Text>
               {data.multiDimAnalysis.suggestions.map((s, i) => (
-                <Text key={i} className='suggestion-item'>· {s}</Text>
+                <View key={i} className='suggestion-item'>
+                  <Icon name='dot' size={12} color='#DEDBC8' />
+                  <Text className='suggestion-text'>{s}</Text>
+                </View>
               ))}
             </View>
           )}
@@ -582,7 +593,7 @@ export default function ResultPage() {
           {isDualRadar && (
             <View className='radar-legend-extra'>
               <Text className='legend-extra-text'>
-                <Text className='legend-pink'>粉色</Text>是我,<Text className='legend-blue'>蓝色</Text>是 TA
+                <Text className='legend-pink'>亮色</Text>是我,<Text className='legend-blue'>暗色</Text>是 TA
               </Text>
             </View>
           )}
@@ -610,10 +621,10 @@ export default function ResultPage() {
         <View className='card share-moments-card'>
           <Text className='card-title'>分享到朋友圈</Text>
           <Text className='card-desc text-muted'>
-            生成专属情侣类型卡片,保存到相册后可发朋友圈
+            保存专属情侣类型卡片,可发朋友圈
           </Text>
           <Button className='btn-primary' onClick={shareToMoments}>
-            生成分享图片
+            保存分享图片
           </Button>
         </View>
       )}

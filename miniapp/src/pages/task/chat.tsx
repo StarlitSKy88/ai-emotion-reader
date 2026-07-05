@@ -9,7 +9,7 @@ import { View, Text, Textarea, Button, Image } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import { http } from '@/lib/request';
 import { trackTaskComplete, trackTaskSkip, trackCrisisRedirect } from '@/lib/track';
-import './index.scss';
+import './chat.scss';
 
 export default function TaskChatPage() {
   const router = useRouter();

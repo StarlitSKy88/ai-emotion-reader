@@ -40,7 +40,7 @@ const TEMPLATES: Record<ShareVariant, (ctx: ShareVariantContext) => ShareVariant
       title: ctx.typeName && !ctx.isSameSex
         ? `我们居然是稀有类型「${ctx.typeName}」，在类型库中相对稀有`
         : `我们居然测出了稀有情侣类型，在类型库中相对稀有`,
-      momentsCopy: `测了下我们的情侣类型，居然是稀有款 ${ctx.typeName && !ctx.isSameSex ? '「' + ctx.typeName + '」' : ''} 🎉 据说这种类型在类型库中相对稀有，快测测你们是什么`,
+      momentsCopy: `测了下我们的情侣类型，居然是稀有款 ${ctx.typeName && !ctx.isSameSex ? '「' + ctx.typeName + '」' : ''}。据说这种类型在类型库中相对稀有，快测测你们是什么`,
     };
   },
   selfmock: (ctx) => ({
@@ -48,19 +48,19 @@ const TEMPLATES: Record<ShareVariant, (ctx: ShareVariantContext) => ShareVariant
     title: ctx.typeName && !ctx.isSameSex
       ? `我们的关系类型是「${ctx.typeName}」，但还是有救的`
       : '我们的情侣类型有点真实，但还是有救的',
-    momentsCopy: `测了下我们的情侣类型，${ctx.typeName && !ctx.isSameSex ? '是「' + ctx.typeName + '」' : '结果有点真实'} 😅 不过据说这种类型反而最值得修复，来测测你们会不会比我们好`,
+    momentsCopy: `测了下我们的情侣类型，${ctx.typeName && !ctx.isSameSex ? '是「' + ctx.typeName + '」' : '结果有点真实'}。不过据说这种类型反而最值得修复，来测测你们会不会比我们好`,
   }),
   helpseek: (ctx) => ({
     variant: 'helpseek',
     title: ctx.typeName && !ctx.isSameSex
       ? `我们卡在「${ctx.typeName}」了，求建议`
       : '我们做完情侣测试卡住了，求建议',
-    momentsCopy: `我们做完情侣测试，${ctx.typeName && !ctx.isSameSex ? '类型是「' + ctx.typeName + '」' : '结果有点扎心'} 😶 默契度不上不下，有没有过来人给点建议`,
+    momentsCopy: `我们做完情侣测试，${ctx.typeName && !ctx.isSameSex ? '类型是「' + ctx.typeName + '」' : '结果有点扎心'}。默契度不上不下，有没有过来人给点建议`,
   }),
   mystery: (ctx) => ({
     variant: 'mystery',
     title: '我们做了情侣测试，结果竟然是…',
-    momentsCopy: `刚和 TA 做完情侣测试，${ctx.typeName && !ctx.isSameSex ? '类型居然是「' + ctx.typeName + '」' : '结果出乎意料'} 🔮 想知道你们是哪种情侣？来测测`,
+    momentsCopy: `刚和 TA 做完情侣测试，${ctx.typeName && !ctx.isSameSex ? '类型居然是「' + ctx.typeName + '」' : '结果出乎意料'}。想知道你们是哪种情侣？来测测`,
   }),
 };
 
