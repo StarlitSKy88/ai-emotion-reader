@@ -5,9 +5,12 @@ export default {
     NODE_ENV: '"production"',
   },
   defineConstants: {
-    API_BASE_URL: '"https://api.wenxin-ai.com/api"',
-    // TODO: 发布前替换为流量主后台申请的真实激励视频 adUnitId
-    REWARDED_AD_UNIT_ID: '"adunit-xxxxxxxxxxxx"',
+    API_BASE_URL: JSON.stringify(process.env.TARO_APP_API || 'https://wenxin.taomyst.top/api'),
+    // V3 商业化:激励视频 adUnitId
+    // - 阶段1(未申请流量主):留空字符串,代码走免费解锁路径(method=free)
+    // - 阶段2/3:填流量主后台申请的真实 adUnitId
+    // 从环境变量 TARO_APP_REWARDED_AD_ID 读取(编译时注入)
+    REWARDED_AD_UNIT_ID: JSON.stringify(process.env.TARO_APP_REWARDED_AD_ID || ''),
   },
   mini: {},
   h5: {
