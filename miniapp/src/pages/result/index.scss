@@ -273,3 +273,134 @@
   line-height: 1.7;
   margin-bottom: 32rpx;
 }
+
+/* ===== V3 商业化付费墙 ===== */
+
+/* 订阅徽章行(顶部居中) */
+.badge-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16rpx;
+  min-height: 0;
+}
+
+.badge-row:empty {
+  display: none;
+}
+
+/* 锁定态卡片:内容模糊 */
+.compat-card.locked .compat-content,
+.type-card.locked .type-content {
+  filter: blur(8rpx);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 锁定覆盖层:绝对定位居中显示 CTA */
+.lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24rpx;
+  padding: 32rpx;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 16rpx;
+  z-index: 2;
+}
+
+/* deep 锁定:仅覆盖 type-card 下半区,不全屏遮罩 */
+.lock-overlay.deep-lock {
+  top: auto;
+  height: 60%;
+  border-top: 1rpx dashed #DEDBC8;
+}
+
+.lock-hint {
+  font-size: 26rpx;
+  color: #DEDBC8;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.lock-cta {
+  min-width: 360rpx;
+  padding: 0 32rpx;
+}
+
+/* 类型卡需要 position:relative 给 lock-overlay 用 */
+.type-card {
+  position: relative;
+}
+
+/* compat-card 也需要 relative */
+.compat-card {
+  position: relative;
+}
+
+/* ===== V3 多维度分析卡 ===== */
+.multi-dim-card {
+  padding: 32rpx;
+}
+
+.multi-dim-overview,
+.multi-dim-dims,
+.multi-dim-suggestions {
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #212121;
+}
+
+.multi-dim-overview {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 24rpx;
+}
+
+.multi-dim-label {
+  display: block;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #DEDBC8;
+  margin-bottom: 12rpx;
+}
+
+.multi-dim-text {
+  display: block;
+  font-size: 28rpx;
+  line-height: 1.7;
+  color: #E1E0CC;
+}
+
+.multi-dim-dim {
+  margin-bottom: 16rpx;
+}
+
+.dim-name {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #DEDBC8;
+  margin-bottom: 4rpx;
+}
+
+.dim-analysis {
+  display: block;
+  font-size: 26rpx;
+  line-height: 1.7;
+  color: #A3A3A3;
+}
+
+.suggestion-item {
+  display: block;
+  font-size: 26rpx;
+  line-height: 1.8;
+  color: #E1E0CC;
+}

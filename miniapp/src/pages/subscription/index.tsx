@@ -1,10 +1,20 @@
 /**
- * 订阅管理页（Phase 5.3.5）
- * - 显示当前订阅状态（套餐 / 到期时间 / 剩余天数）
- * - 套餐选择（月度 ¥39 / 年度 ¥298）
- * - 拉起微信支付（调 /api/subscription/create + wx.requestPayment）
+ * 订阅管理页 · V3 商业化
  *
- * 注：微信小程序订阅为一次性购买，到期后需手动续费，不会自动扣款。
+ * 单一订阅产品:¥19.9 / 30 天
+ * - 去广告 + 全部解锁(basic + deep) + 30 天成长报告
+ *
+ * 流程:
+ * 1. 显示当前订阅状态(剩余天数)
+ * 2. 点击订阅 → POST /api/subscription/create
+ * 3. 拿到 PayParams 后调 wx.requestPayment
+ * 4. 支付成功后重新加载状态
+ *
+ * 注:
+ * - V3 价格 ¥19.9 = 1990 分(常量 V3_PRICE_FEN)
+ * - 后端 SubscriptionPlan 类型仍为 'monthly' | 'yearly',前端按 'monthly' 调用,
+ *   实际订单金额由后端 SUBSCRIPTION_PRODUCTS 决定(后端已改造或待改造为 1990)
+ * - 微信小程序订阅为一次性购买,到期后需手动续费,不会自动扣款
  */
 import { useState } from 'react';
 import { View, Text, Button } from '@tarojs/components';
@@ -18,6 +28,15 @@ import {
 } from '@/lib/track';
 import './index.scss';
 
+/** V3 订阅价格(分) · ¥19.9 = 1990 分 */
+const V3_PRICE_FEN = 1990;
+/** V3 订阅周期(天) */
+const V3_DURATION_DAYS = 30;
+/** V3 订阅价格(元,展示用) */
+const V3_PRICE_YUAN = '¥19.9';
+/** 调用后端 create 接口时使用的 plan(后端 SubscriptionPlan 类型限制) */
+const V3_BACKEND_PLAN = 'monthly' as const;
+
 interface StatusData {
   subscription: {
     plan: 'monthly' | 'yearly' | null;
@@ -27,15 +46,6 @@ interface StatusData {
   };
   active: boolean;
   remainingDays: number;
-  products: Record<
-    'monthly' | 'yearly',
-    {
-      amountFen: number;
-      amountYuan: string;
-      months: number;
-      description: string;
-    }
-  >;
 }
 
 interface CreateData {
@@ -54,7 +64,7 @@ interface CreateData {
 export default function SubscriptionPage() {
   const [status, setStatus] = useState<StatusData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [paying, setPaying] = useState<'monthly' | 'yearly' | null>(null);
+  const [paying, setPaying] = useState(false);
 
   useDidShow(() => {
     trackPageView('pages/subscription/index');
@@ -82,23 +92,25 @@ export default function SubscriptionPage() {
     }
   };
 
-  /** 发起订阅支付 */
-  const handleSubscribe = async (plan: 'monthly' | 'yearly') => {
+  /** 发起 V3 订阅支付(¥19.9 / 30 天) */
+  const handleSubscribe = async () => {
     if (paying) return;
-    setPaying(plan);
-    trackSubscribeClick(plan);
+    setPaying(true);
+    trackSubscribeClick(V3_BACKEND_PLAN);
     try {
-      const data = await http.post<CreateData>('/api/subscription/create', { plan });
+      const data = await http.post<CreateData>('/api/subscription/create', {
+        plan: V3_BACKEND_PLAN,
+      });
 
-      // mock 模式：直接提示激活成功，重新加载状态
+      // mock 模式:直接提示激活成功,重新加载状态
       if (data.mock) {
-        trackSubscribeSuccess(plan, data.amountFen);
+        trackSubscribeSuccess(V3_BACKEND_PLAN, V3_PRICE_FEN);
         Taro.showToast({ title: 'mock 模式已激活', icon: 'success' });
         await loadStatus();
         return;
       }
 
-      // 真实支付：调 wx.requestPayment
+      // 真实支付:调 wx.requestPayment
       await new Promise<void>((resolve, reject) => {
         Taro.requestPayment({
           timeStamp: data.timeStamp,
@@ -111,9 +123,9 @@ export default function SubscriptionPage() {
         });
       });
 
-      trackSubscribeSuccess(plan, data.amountFen);
+      trackSubscribeSuccess(V3_BACKEND_PLAN, V3_PRICE_FEN);
       Taro.showToast({ title: '订阅成功', icon: 'success' });
-      // 等回调激活后重新加载状态（回调可能有延迟，1s 后重试）
+      // 等回调激活后重新加载状态(回调可能有延迟,1s 后重试)
       setTimeout(() => {
         loadStatus();
       }, 1000);
@@ -129,7 +141,7 @@ export default function SubscriptionPage() {
         });
       }
     } finally {
-      setPaying(null);
+      setPaying(false);
     }
   };
 
@@ -150,13 +162,12 @@ export default function SubscriptionPage() {
 
   const sub = status?.subscription;
   const isActive = status?.active;
-  const currentPlan = sub?.plan;
 
   return (
     <View className='subscription'>
       <View className='sub-header'>
-        <Text className='sub-title'>问心 AI 会员</Text>
-        <Text className='sub-subtitle'>解锁完整成长报告 + 无限任务总结</Text>
+        <Text className='sub-title'>问心 AI · 30 天畅享</Text>
+        <Text className='sub-subtitle'>去广告 + 全部解锁 + 30 天成长报告</Text>
       </View>
 
       {/* 当前订阅状态 */}
@@ -166,64 +177,40 @@ export default function SubscriptionPage() {
             {isActive ? '订阅中' : sub.status === 'expired' ? '已过期' : sub.status === 'canceled' ? '已取消' : '未订阅'}
           </Text>
           <Text className='status-plan'>
-            {currentPlan === 'monthly' ? '月度订阅' : currentPlan === 'yearly' ? '年度订阅' : '尚未订阅'}
+            {isActive ? `${V3_PRICE_YUAN} · 30 天畅享` : '尚未订阅'}
           </Text>
           {isActive && sub.currentPeriodEnd && (
             <Text className='status-expire'>
-              到期时间：{formatExpire(sub.currentPeriodEnd)}（剩 {status?.remainingDays} 天）
+              到期时间:{formatExpire(sub.currentPeriodEnd)}(剩 {status?.remainingDays} 天)
             </Text>
           )}
         </View>
       )}
 
-      {/* 套餐选择 */}
+      {/* V3 单一订阅产品卡 */}
       <View className='plans'>
-        {/* 月度 */}
-        <View className='plan-card'>
-          <View className='plan-header'>
-            <Text className='plan-name'>月度订阅</Text>
-            <Text className='plan-price'>
-              ¥39<span className='plan-unit'>/月</span>
-            </Text>
-          </View>
-          <Text className='plan-desc'>适合想先体验一段时间的你</Text>
-          <View className='plan-features'>
-            <Text className='feature-item'>完整 7 天 / 30 天成长报告</Text>
-            <Text className='feature-item'>无限任务默契度总结</Text>
-            <Text className='feature-item'>每日任务生成</Text>
-          </View>
-          <Button
-            className={`plan-cta ${currentPlan === 'monthly' && isActive ? 'btn-current' : ''}`}
-            disabled={paying !== null || (currentPlan === 'monthly' && isActive)}
-            loading={paying === 'monthly'}
-            onClick={() => handleSubscribe('monthly')}
-          >
-            {currentPlan === 'monthly' && isActive ? '当前套餐' : '订阅月度'}
-          </Button>
-        </View>
-
-        {/* 年度（推荐） */}
         <View className='plan-card recommend'>
-          <Text className='recommend-tag'>省 ¥170</Text>
+          <Text className='recommend-tag'>30 天畅享</Text>
           <View className='plan-header'>
-            <Text className='plan-name'>年度订阅</Text>
+            <Text className='plan-name'>全部解锁套餐</Text>
             <Text className='plan-price'>
-              ¥298<span className='plan-unit'>/年</span>
+              {V3_PRICE_YUAN}<Text className='plan-unit'>/ {V3_DURATION_DAYS} 天</Text>
             </Text>
           </View>
-          <Text className='plan-desc'>相当于 ¥24.8/月，最受欢迎</Text>
+          <Text className='plan-desc'>去广告 + 全部解锁 + 30 天成长报告</Text>
           <View className='plan-features'>
-            <Text className='feature-item'>月度全部权益</Text>
-            <Text className='feature-item'>省 ¥170（相比月度）</Text>
-            <Text className='feature-item'>优先体验新功能</Text>
+            <Text className='feature-item'>去除所有广告,体验更沉浸</Text>
+            <Text className='feature-item'>basic + deep 内容全部解锁</Text>
+            <Text className='feature-item'>30 天每日任务 + 多维度分析报告</Text>
+            <Text className='feature-item'>专属订阅徽章标识</Text>
           </View>
           <Button
-            className={`plan-cta ${currentPlan === 'yearly' && isActive ? 'btn-current' : ''}`}
-            disabled={paying !== null || (currentPlan === 'yearly' && isActive)}
-            loading={paying === 'yearly'}
-            onClick={() => handleSubscribe('yearly')}
+            className={`plan-cta ${isActive ? 'btn-current' : ''}`}
+            disabled={paying || isActive}
+            loading={paying}
+            onClick={handleSubscribe}
           >
-            {currentPlan === 'yearly' && isActive ? '当前套餐' : '订阅年度'}
+            {isActive ? '当前已订阅' : `立即订阅 ${V3_PRICE_YUAN}`}
           </Button>
         </View>
       </View>
@@ -231,10 +218,10 @@ export default function SubscriptionPage() {
       {/* 底部说明 */}
       <View className='sub-footer'>
         <Text className='sub-tip'>
-          · 订阅期间可继续使用全部功能
+          · 订阅期间去除所有广告,全部内容解锁
         </Text>
         <Text className='sub-tip'>
-          · 到期后需手动续费，不会自动扣款
+          · 到期后需手动续费,不会自动扣款
         </Text>
         <Text className='sub-tip'>
           · 如有疑问可在「我的 → 关于」联系客服

@@ -267,6 +267,34 @@ export interface TaskResponseInfo {
   createdAt: string;
 }
 
+// ==================== V3 商业化:30 天挑战进度 ====================
+
+/** 30 天挑战进度信息(断点续接) */
+export interface ChallengeProgress {
+  /** 已完成天数(双方都 done,累计值,断点后不重置) */
+  completedDates: number;
+  /** 总天数 */
+  totalDays: number;
+  /** 当前连续是否活着 */
+  streakAlive: boolean;
+  /** 上次中断日期(ISO 字符串),未中断过则为 null */
+  lastBreakDate: string | null;
+  /** 今天双方是否都 done */
+  todayCompleted: boolean;
+}
+
+/** 历史某天的完成情况(用于进度查询 history) */
+export interface ChallengeHistoryItem {
+  /** 日期 YYYY-MM-DD */
+  date: string;
+  /** A 是否完成 */
+  aDone: boolean;
+  /** B 是否完成 */
+  bDone: boolean;
+  /** 双方是否都完成 */
+  bothDone: boolean;
+}
+
 /** LLM 情绪命名返回结构 */
 export interface EmotionNamingResult {
   emotionTag: string;
@@ -435,4 +463,19 @@ export interface CrisisDetectionResult {
   matchedKeywords: string[];
   /** 风险等级（low/middle/high） */
   level: 'low' | 'middle' | 'high';
+}
+
+// =====================================================================
+// V3 · 多维度分析（深度解锁后 LLM 生成）
+// =====================================================================
+
+/** V3 多维度分析结果(LLM 生成) */
+export interface MultiDimAnalysis {
+  overview: string;
+  dimensions: {
+    code: string;
+    name: string;
+    analysis: string;
+  }[];
+  suggestions: string[];
 }

@@ -19,23 +19,29 @@ import type {
   SubscriptionStatus,
 } from '@/shared/types';
 
-/** 订阅产品配置（¥39/月、¥298/年） */
+/**
+ * 订阅产品配置（V3:¥19.9/30天,取消年付）
+ *
+ * V3 改造:
+ * - 价格 ¥39 → ¥19.9(1990 分)
+ * - 周期 1 个月 → 30 天(用 months=1 近似,activateSubscription 用 setMonth 续期,30 天 ≈ 1 月)
+ * - 取消 yearly(保留类型兼容,但不再销售)
+ * - description 改为 V3 文案
+ */
 export const SUBSCRIPTION_PRODUCTS = {
   monthly: {
-    /** 金额（分）：¥39 = 3900 分 */
-    amountFen: 3900,
-    /** 周期月数 */
+    /** 金额（分）：¥19.9 = 1990 分 */
+    amountFen: 1990,
+    /** 周期月数（30 天 ≈ 1 月,setMonth 续期） */
     months: 1,
     /** 商品描述 */
-    description: '问心 AI 月度订阅',
+    description: '问心 AI 30 天订阅(去广告 + 全部解锁)',
   },
   yearly: {
-    /** 金额（分）：¥298 = 29800 分 */
+    /** V3 已下架,保留字段避免类型破坏。新订阅不再创建 yearly 订单 */
     amountFen: 29800,
-    /** 周期月数 */
     months: 12,
-    /** 商品描述 */
-    description: '问心 AI 年度订阅',
+    description: '问心 AI 年度订阅(已下架)',
   },
 } as const satisfies Record<SubscriptionPlan, {
   amountFen: number;

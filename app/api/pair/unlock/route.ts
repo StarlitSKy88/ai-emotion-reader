@@ -1,33 +1,49 @@
 /**
- * 解锁深度结果
+ * 解锁配对结果
  * POST /api/pair/unlock
+ * body: { pairSessionId, tier: 'basic' | 'deep', method?: 'ad' | 'pay' }
  *
- * B-WC-1 修复：MVP 阶段深度内容免费开放，此路由保留向后兼容，V2 接入虚拟支付后恢复。
+ * V3 商业化:
+ * - 阶段1:全免费,直接标记解锁
+ * - 阶段2/3:未订阅=看广告解锁,已订阅=免费解锁
  *
- * body: { pairSessionId, method: 'free' | 'pay' | 'ad' }
- *
- * 逻辑：
+ * 逻辑:
  * 1. 需登录
  * 2. 校验当前用户是 initiatorUserId 或 responderUserId
  * 3. 校验 resultSharedToInitiator=true（A 必须先等 B 分享）
- * 4. 更新 PairSession：unlocked=true, unlockMethod='free'
- * 5. 返回更新后的 ResultData（同 /api/pair/result）
+ * 4. 调 resolveUnlockMethod 判断解锁方式
+ * 5. 更新 PairSession 对应 tier 字段:
+ *    - tier=basic → basicUnlockMethod + basicUnlockedAt
+ *    - tier=deep  → deepUnlockMethod + deepUnlockedAt
+ * 6. 返回更新后的 ResultData（同 /api/pair/result）
  *
- * 说明：
- * - 配对完成时 PairSession.unlocked 已默认为 true（见 /api/test/submit），正常走幂等分支。
- * - method 仍接受 'free' / 'pay' / 'ad'，仅用于向后兼容前端旧版本，实际不再区分付费/广告渠道，
- *   一律按 'free' 写入 unlockMethod。
- * - 幂等：已解锁状态下重复调用直接返回当前 ResultData。
+ * 幂等:已解锁状态下重复调用直接返回当前 ResultData。
+ *
+ * 向后兼容:旧前端不传 tier 时默认按 'basic' 处理;旧 method 参数忽略,
+ * 一律以 resolveUnlockMethod 计算结果为准。
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getUserIdFromAuthHeader } from '@/lib/wechat-auth';
 import { buildResultData } from '@/lib/pair-result';
+import {
+  resolveUnlockMethod,
+  isUserSubscribed,
+  type UnlockTier,
+  type UnlockMethod as CommercialUnlockMethod,
+} from '@/lib/commercial-policy';
 import type { ApiResponse, UnlockMethod } from '@/shared/types';
 
 interface UnlockBody {
   pairSessionId: string;
-  method: UnlockMethod;
+  tier?: UnlockTier;
+  /** 旧参数,向后兼容,实际不再使用 */
+  method?: UnlockMethod;
+}
+
+/** 校验 tier 参数 */
+function isValidTier(tier: unknown): tier is UnlockTier {
+  return tier === 'basic' || tier === 'deep';
 }
 
 export async function POST(request: NextRequest) {
@@ -49,17 +65,9 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-    // B-WC-1：MVP 阶段免费解锁，接受 'free' / 'pay' / 'ad' 任一值（向后兼容前端旧版本）
-    if (
-      body.method !== 'free' &&
-      body.method !== 'pay' &&
-      body.method !== 'ad'
-    ) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, error: 'method 参数无效' },
-        { status: 400 },
-      );
-    }
+
+    // V3:tier 必传,旧前端未传时默认 basic
+    const tier: UnlockTier = isValidTier(body.tier) ? body.tier : 'basic';
 
     const pair = await prisma.pairSession.findUnique({
       where: { id: body.pairSessionId },
@@ -77,7 +85,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 权限：必须是 A 或 B
+    // 权限:必须是 A 或 B
     const isInitiator = pair.initiatorUserId === userId;
     const isResponder = pair.responderUserId === userId;
     if (!isInitiator && !isResponder) {
@@ -87,17 +95,35 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 校验：B 必须先分享给 A
+    // 校验:B 必须先分享给 A
     if (!pair.resultSharedToInitiator) {
       return NextResponse.json<ApiResponse>(
-        // W-WC-2 修复：原「请先等 TA 分享解锁基础结果」违反微信运营规范，改为温和措辞
         { success: false, error: '请先等 TA 把结果发给你' },
         { status: 400 },
       );
     }
 
-    // 幂等：已解锁直接返回当前结果（MVP 阶段配对完成即 unlocked=true，正常走此分支）
-    if (pair.unlocked) {
+    // 查当前用户订阅状态
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { subscription: true },
+    });
+    const isSubscribed = isUserSubscribed(user?.subscription);
+
+    // 计算 V3 解锁方式
+    const resolvedMethod: CommercialUnlockMethod = resolveUnlockMethod(
+      tier,
+      isSubscribed,
+    );
+
+    // 判断当前 tier 是否已解锁(V3 新字段)
+    const alreadyUnlocked =
+      tier === 'basic'
+        ? !!pair.basicUnlockedAt
+        : !!pair.deepUnlockedAt;
+
+    // 幂等:已解锁直接返回当前结果
+    if (alreadyUnlocked) {
       const data = await buildResultData(pair, userId);
       return NextResponse.json<ApiResponse<typeof data>>({
         success: true,
@@ -105,13 +131,29 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 兜底：旧数据 unlocked=false 时免费解锁（一律按 'free' 写入）
+    // 更新对应 tier 的解锁字段
+    // 旧字段 unlocked/unlockMethod 同步更新(basic 解锁时),保持旧前端兼容
+    const now = new Date();
+    const updateData: Record<string, unknown> =
+      tier === 'basic'
+        ? {
+            basicUnlockMethod: resolvedMethod,
+            basicUnlockedAt: now,
+            // 同步旧字段
+            unlocked: true,
+            unlockMethod: resolvedMethod,
+          }
+        : {
+            deepUnlockMethod: resolvedMethod,
+            deepUnlockedAt: now,
+            // deep 解锁同时确保旧字段 unlocked=true(深度内容可见)
+            unlocked: true,
+            unlockMethod: resolvedMethod,
+          };
+
     const updated = await prisma.pairSession.update({
       where: { id: pair.id },
-      data: {
-        unlocked: true,
-        unlockMethod: 'free',
-      },
+      data: updateData,
       include: {
         coupleType: true,
         initiatorUser: { select: { nickname: true, avatarUrl: true } },

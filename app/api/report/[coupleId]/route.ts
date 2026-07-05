@@ -2,12 +2,13 @@
  * 成长报告（Phase 5.2.1 / 5.2.2）
  * GET /api/report/[coupleId]?range=7d|30d
  *
- * 免费/付费分层返回：
- * - 免费用户：仅返回 aggregation 数据 + 兜底 title + blessing（付费墙 CTA）
- * - 订阅用户：完整报告（含 LLM 叙事 narrative）
+ * V3 商业化付费墙:
+ * - 阶段1:所有报告免费
+ * - 阶段2/3 未订阅 + 未 deep 解锁:只返回 1 天报告(最新一份,无 narrative)
+ * - 阶段2/3 已订阅 或 deep 解锁(ad/pay):返回完整报告(含 LLM 叙事)
  *
  * 触发 LLM 时机：
- * - 订阅用户首次访问该报告 → 调 LLM 生成 narrative，写入 Couple.profile.reports 缓存
+ * - 已解锁用户首次访问该报告 → 调 LLM 生成 narrative，写入 Couple.profile.reports 缓存
  * - 后续访问直接读缓存
  *
  * 缓存键：`report_${range}_${endDate}`，存在 Couple.profile.reports 对象中
@@ -27,7 +28,10 @@ import {
   getCoupleForUser,
   parseJsonFromLlm,
 } from '@/lib/task-service';
-import { hasPaidAccess } from '@/lib/subscription';
+import {
+  getCommercialStage,
+  isUserSubscribed,
+} from '@/lib/commercial-policy';
 import type {
   ApiResponse,
   CoupleReport,
@@ -82,11 +86,34 @@ export async function GET(
     // 1. 聚合数据
     const aggregation = await aggregateReport(coupleId, range);
 
-    // 2. 校验付费状态
-    const unlocked = await hasPaidAccess(userId);
+    // 2. V3 付费墙校验
+    // - 阶段1:全免费
+    // - 阶段2/3:已订阅 或 deep 解锁(ad/pay) → 完整报告
+    // - 否则:仅返回基础聚合 + 兜底 blessing(付费墙 CTA)
+    const stage = getCommercialStage();
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { subscription: true },
+    });
+    const isSubscribed = isUserSubscribed(user?.subscription);
 
-    // 3. 免费用户：仅返回聚合数据 + 兜底 title + blessing（付费墙 CTA）
-    if (!unlocked) {
+    // 查 PairSession.deepUnlockMethod(V3 字段)
+    const pairSession = couple.pairSessionId
+      ? await prisma.pairSession.findUnique({
+          where: { id: couple.pairSessionId },
+          select: { deepUnlockMethod: true },
+        })
+      : null;
+    const deepUnlockMethod = pairSession?.deepUnlockMethod;
+
+    const canViewFullReport =
+      stage === 'stage1' ||
+      isSubscribed ||
+      deepUnlockMethod === 'ad' ||
+      deepUnlockMethod === 'pay';
+
+    // 3. 未解锁:仅返回聚合数据 + 兜底 title + blessing(付费墙 CTA)
+    if (!canViewFullReport) {
       const fallback = buildFallbackReport(range);
       const report: CoupleReport = {
         id: generateReportId(coupleId, range, aggregation.endDate),
@@ -111,7 +138,7 @@ export async function GET(
       });
     }
 
-    // 4. 订阅用户：读缓存或调 LLM 生成 narrative
+    // 4. 已解锁用户(阶段1/订阅/deep解锁):读缓存或调 LLM 生成 narrative
     const profile = (couple.profile ?? {}) as CoupleProfile;
     const cacheKey = `report_${range}_${aggregation.endDate}`;
     const cached = profile.reports?.[cacheKey];

@@ -5,11 +5,18 @@
  * 保证两个路由返回的 ResultData 结构完全一致。
  */
 import { prisma } from '@/lib/prisma';
+import { chatCompletion } from '@/lib/llm';
+import {
+  MULTI_DIM_ANALYSIS_SYSTEM_PROMPT,
+  buildMultiDimAnalysisPrompt,
+} from '@/lib/prompts';
+import { parseJsonFromLlm } from '@/lib/task-service';
 import { getCoupleTypesByGenderCombo } from '@/shared/couple-types-all';
 import type {
   GenderCombo,
   DimensionScores,
   Rarity,
+  MultiDimAnalysis,
 } from '@/shared/types';
 import type { PairSession, CoupleType } from '@prisma/client';
 
@@ -78,6 +85,8 @@ export interface ResultData {
   partnerNickname?: string;
   /** B（对方）的头像 URL，unlocked 后返回 */
   partnerAvatar?: string;
+  /** V3 多维度分析（深度解锁后 LLM 生成并缓存） */
+  multiDimAnalysis?: MultiDimAnalysis;
 }
 
 /**
@@ -289,6 +298,43 @@ export async function buildResultData(
     dimensionsB = (pair.dimensionsB as DimensionScores) ?? undefined;
   }
 
+  // V3 深度解锁：判断 deepUnlockMethod 是否已设置（保留 unlocked = basic 解锁含义）
+  const deepUnlocked = !!pair.deepUnlockMethod;
+
+  // 多维度分析：深度解锁后从缓存读取，无缓存则调用 LLM 生成并落库
+  let multiDimAnalysis: MultiDimAnalysis | undefined;
+  if (deepUnlocked) {
+    if (pair.multiDimAnalysis) {
+      multiDimAnalysis = parseJsonFromLlm<MultiDimAnalysis>(pair.multiDimAnalysis) ?? undefined;
+    } else {
+      try {
+        const prompt = buildMultiDimAnalysisPrompt({
+          dimensionsA: (pair.dimensionsA as Record<string, number>) ?? {},
+          dimensionsB: (pair.dimensionsB as Record<string, number>) ?? {},
+          compatibility: pair.compatibility ?? 0,
+          coupleTypeName: pair.coupleType?.name ?? '未知',
+          coupleTypeOneLiner: pair.coupleType?.oneLiner ?? '',
+          genderCombo: pair.genderCombo,
+        });
+        const raw = await chatCompletion(MULTI_DIM_ANALYSIS_SYSTEM_PROMPT, prompt, 800);
+        const parsed = parseJsonFromLlm<MultiDimAnalysis>(raw);
+        if (parsed?.overview) {
+          // 缓存到数据库（避免重复调用 LLM）
+          await prisma.pairSession.update({
+            where: { id: pair.id },
+            data: {
+              multiDimAnalysis: raw,
+              multiDimGeneratedAt: new Date(),
+            },
+          });
+          multiDimAnalysis = parsed;
+        }
+      } catch {
+        // LLM 失败不阻塞，返回默认提示（multiDimAnalysis 保持 undefined）
+      }
+    }
+  }
+
   // 已分享时，根据 isInitiator 映射 my/partner（双方头像区域）
   const myUser = isInitiator ? pair.initiatorUser : pair.responderUser;
   const partnerUser = isInitiator ? pair.responderUser : pair.initiatorUser;
@@ -309,5 +355,6 @@ export async function buildResultData(
     myAvatar: myUser?.avatarUrl ?? undefined,
     partnerNickname: partnerUser?.nickname ?? undefined,
     partnerAvatar: partnerUser?.avatarUrl ?? undefined,
+    multiDimAnalysis,
   };
 }

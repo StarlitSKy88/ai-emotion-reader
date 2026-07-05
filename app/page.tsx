@@ -322,61 +322,6 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* 定价区（保留 V2 内容，套 V3 深色） */}
-          <div id='订阅' className='mt-24 md:mt-32 max-w-2xl mx-auto'>
-            <div className='text-primary text-[10px] sm:text-xs mb-8 text-center'>
-              订阅
-            </div>
-            <h3 className='text-primary text-2xl md:text-3xl mb-4 text-center leading-tight'>
-              两种价格，同一份陪伴。
-            </h3>
-            <p className='text-gray-500 mb-12 text-sm text-center leading-relaxed'>
-              订阅后解锁完整 7 天 / 30 天成长报告 + 无限任务默契度总结。
-              <br />
-              到期后需手动续费，不会自动扣款。
-            </p>
-
-            <div className='border-t border-[#212121]'>
-              {/* 月度 */}
-              <div className='py-8 border-b border-[#212121] flex items-baseline justify-between'>
-                <div>
-                  <div className='text-primary text-2xl mb-1'>
-                    ¥39<span className='text-base text-gray-500'>/月</span>
-                  </div>
-                  <div className='text-xs text-gray-500'>月度订阅</div>
-                </div>
-                <div className='text-right'>
-                  <div className='text-sm text-primary mb-1'>完整 7 天 / 30 天成长报告</div>
-                  <div className='text-xs text-gray-500'>适合想先体验一段时间的你们</div>
-                </div>
-              </div>
-
-              {/* 年度 */}
-              <div className='py-8 border-b border-[#212121] flex items-baseline justify-between bg-[#101010] -mx-2 px-2 rounded'>
-                <div>
-                  <div className='text-primary text-2xl mb-1'>
-                    ¥298<span className='text-base text-gray-500'>/年</span>
-                  </div>
-                  <div className='text-xs text-gray-500'>年度订阅 · 省 ¥170</div>
-                </div>
-                <div className='text-right'>
-                  <div className='text-sm text-primary mb-1'>
-                    月度全部权益 · 优先体验新功能
-                  </div>
-                  <div className='text-xs text-gray-500'>相当于 ¥24.8/月，订阅最多</div>
-                </div>
-              </div>
-            </div>
-
-            <p className='text-xs text-gray-500 mt-8 leading-relaxed'>
-              * 价格不含税费。所有支付通过微信支付。
-              <br />
-              订阅期间可随时取消，到期后不自动续费。
-              <br />
-              如有疑问可在小程序内「我的 → 关于」联系客服。
-            </p>
-          </div>
-
           {/* Footer */}
           <footer className='mt-24 pt-8 border-t border-[#212121]'>
             <div className='flex flex-col gap-8'>
@@ -394,6 +339,36 @@ export default function Home() {
               </div>
             </div>
           </footer>
+        </div>
+      </section>
+
+      {/* === Section 4: 定价区 === */}
+      <section id='订阅' className='bg-black py-20 md:py-32'>
+        <div className='max-w-4xl mx-auto px-6 text-center'>
+          <WordsPullUpMultiStyle
+            segments={[
+              { text: '¥19.9 / 30 天', className: 'text-primary' },
+              { text: '一次订阅,全部解锁。', className: 'italic font-serif text-gray-500' },
+            ]}
+            containerClassName='text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-8'
+          />
+          <p className='text-gray-400 text-sm sm:text-base mb-12 max-w-2xl mx-auto'>
+            去广告 · 多维度深度分析 · 30 天成长报告 · 每日任务全部解锁
+          </p>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto'>
+            <div className='bg-[#101010] rounded-2xl p-6'>
+              <Check className='w-6 h-6 text-primary mx-auto mb-3' />
+              <p className='text-primary text-sm'>去广告体验</p>
+            </div>
+            <div className='bg-[#101010] rounded-2xl p-6'>
+              <Check className='w-6 h-6 text-primary mx-auto mb-3' />
+              <p className='text-primary text-sm'>深度分析解锁</p>
+            </div>
+            <div className='bg-[#101010] rounded-2xl p-6'>
+              <Check className='w-6 h-6 text-primary mx-auto mb-3' />
+              <p className='text-primary text-sm'>30 天成长报告</p>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -139,6 +139,10 @@ export type DailyTaskWithResponses = {
   statusA: string;
   statusB: string;
   aiSummary: string | null;
+  // V3 商业化:30 天挑战断点续接字段(每日任务携带截至当天的进度)
+  streakAlive: boolean;
+  lastBreakDate: Date | null;
+  completedDates: number;
   createdAt: Date;
   responses: Array<{
     id: string;

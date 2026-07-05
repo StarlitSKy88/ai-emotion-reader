@@ -283,6 +283,13 @@ model PairSession {
   // 解锁状态
   unlocked                Boolean   @default(false)
   unlockMethod            String? // pay / ad
+  // V3 商业化:两层解锁 + 多维度分析
+  basicUnlockMethod       String? // basic 解锁方式:ad / pay / free(阶段1)
+  basicUnlockedAt         DateTime?
+  deepUnlockMethod        String? // deep 解锁方式:ad / pay / free(阶段1)
+  deepUnlockedAt          DateTime?
+  multiDimAnalysis        String?   @db.Text // V3 新增 LLM 生成的多维度分析文本
+  multiDimGeneratedAt     DateTime?
   // 结果分享状态
   resultSharedToInitiator Boolean   @default(false) // B 是否已分享给 A
   // 时间
@@ -367,20 +374,24 @@ model Couple {
 
 // 每日任务
 model DailyTask {
-  id              String   @id @default(cuid())
+  id              String    @id @default(cuid())
   coupleId        String
-  date            DateTime @db.Date // 纯日期（不带时间），避免跨时区情侣日期错位
-  timezone        String   @default("Asia/Shanghai") // 任务所属时区，确保双方本地日历对齐
+  date            DateTime  @db.Date // 纯日期（不带时间），避免跨时区情侣日期错位
+  timezone        String    @default("Asia/Shanghai") // 任务所属时区，确保双方本地日历对齐
   title           String
-  description     String   @db.Text
-  difficulty      String   @default("medium") // easy / medium / hard
+  description     String    @db.Text
+  difficulty      String    @default("medium") // easy / medium / hard
   sourceDimension String // D1-D6，任务来源于哪个维度
   targetDimension String? // D1-D6，任务目标改善哪个维度
-  estimatedMin    Int      @default(3) // 预计完成分钟
-  statusA         String   @default("pending") // pending / done / skipped
-  statusB         String   @default("pending")
-  aiSummary       String?  @db.Text // 双方完成后的 AI 默契度总结
-  createdAt       DateTime @default(now())
+  estimatedMin    Int       @default(3) // 预计完成分钟
+  statusA         String    @default("pending") // pending / done / skipped
+  statusB         String    @default("pending")
+  aiSummary       String?   @db.Text // 双方完成后的 AI 默契度总结
+  // V3 断点续接:双方同步挑战,中断后从断点继续
+  streakAlive     Boolean   @default(true) // 当前连续是否还活着(双方同步)
+  lastBreakDate   DateTime? @db.Date // 上次中断日期(用于断点续接计算)
+  completedDates  Int       @default(0) // 已完成的天数(双方都 done 才 +1)
+  createdAt       DateTime  @default(now())
 
   couple    Couple         @relation(fields: [coupleId], references: [id], onDelete: Cascade)
   responses TaskResponse[]
@@ -405,11 +416,11 @@ model TaskResponse {
   task DailyTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
   user User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  @@index([taskId])
-  @@index([userId, createdAt])
   // W-1 修复：防止同一用户对同一任务并发提交产生 2 条 TaskResponse
   // userId 可空（用户注销后置 null），PostgreSQL partial unique 允许多个 null 共存
   @@unique([taskId, userId])
+  @@index([taskId])
+  @@index([userId, createdAt])
   @@map("task_responses")
 }
 
@@ -484,7 +495,7 @@ model PushSubscription {
 // 暂不在此 schema 中加 @db.Ttl（Prisma 不支持 Postgres TTL，会引发 schema 校验错误）。
 model TrackEvent {
   id        String   @id @default(cuid())
-  userId    String?  // 匿名用户为 null（如落地页访问）
+  userId    String? // 匿名用户为 null（如落地页访问）
   // 事件名（命名规范：object_action，如 page_view / test_start / task_complete）
   event     String
   // 事件属性（JSON：{ page, taskId, pairSessionId, plan, ... }）

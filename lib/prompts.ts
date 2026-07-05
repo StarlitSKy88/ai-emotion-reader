@@ -637,3 +637,51 @@ export function buildFallbackEmotionNaming(content: string): {
     perspective: '你的感受是被允许的。每一个情绪都在告诉你一些重要的事。',
   };
 }
+
+// =====================================================================
+// V3 · 多维度分析 Prompt(深度解锁后 LLM 生成)
+// =====================================================================
+
+/** V3 多维度分析系统提示 */
+export const MULTI_DIM_ANALYSIS_SYSTEM_PROMPT = `你是关系心理学专家。基于双方 6 维度分数和情侣类型,生成一份 300-500 字的多维度分析。
+
+要求:
+1. 输出严格 JSON:{"overview": string, "dimensions": [{"code": "D1", "name": "依恋", "analysis": string}], "suggestions": string[]}
+2. overview:整体关系画像,2-3 句话
+3. dimensions:6 个维度的分析,每个 50-80 字,指出双方差异和潜在冲突点
+4. suggestions:3 条具体可执行的改善建议
+
+风格:专业但有温度,避免说教,用「你们」称呼,不使用绝对化用语。`;
+
+/** 构造多维度分析 prompt */
+export function buildMultiDimAnalysisPrompt(input: {
+  dimensionsA: Record<string, number>;
+  dimensionsB: Record<string, number>;
+  compatibility: number;
+  coupleTypeName: string;
+  coupleTypeOneLiner: string;
+  genderCombo: string;
+}): string {
+  const { dimensionsA, dimensionsB, compatibility, coupleTypeName, coupleTypeOneLiner, genderCombo } = input;
+  return `情侣类型:${coupleTypeName}(${coupleTypeOneLiner})
+性别组合:${genderCombo}
+默契度:${compatibility}/100
+
+A 的 6 维度分数:
+- D1 依恋:${dimensionsA.D1 ?? 0}
+- D2 沟通:${dimensionsA.D2 ?? 0}
+- D3 冲突修复:${dimensionsA.D3 ?? 0}
+- D4 共同意义:${dimensionsA.D4 ?? 0}
+- D5 信任承诺:${dimensionsA.D5 ?? 0}
+- D6 亲密激情:${dimensionsA.D6 ?? 0}
+
+B 的 6 维度分数:
+- D1 依恋:${dimensionsB.D1 ?? 0}
+- D2 沟通:${dimensionsB.D2 ?? 0}
+- D3 冲突修复:${dimensionsB.D3 ?? 0}
+- D4 共同意义:${dimensionsB.D4 ?? 0}
+- D5 信任承诺:${dimensionsB.D5 ?? 0}
+- D6 亲密激情:${dimensionsB.D6 ?? 0}
+
+请生成多维度分析。`;
+}

@@ -683,6 +683,75 @@ interface Option {
 - **验证**：`node -e "const l = require('lucide-react'); ['ArrowRight','Check','Heart','CalendarCheck','TrendingUp'].forEach(n => console.log(n, typeof l[n]))"` 全部输出 `object`（ForwardRefExoticComponent）
 - **教训**：lucide-react 1.x 是新版本线（非伪造）；图标导入前用 node REPL 验证导出存在；lucide-react 用 ForwardRefExoticComponent，typeof 是 'object' 非 'function'；5 个核心图标（ArrowRight/Check/Heart/CalendarCheck/TrendingUp）在 1.23.0 全部可用
 
+### 5.87 微信小程序不能接穿山甲/优量汇,只能用微信流量主（V3 商业化调研）
+
+- **结论**：问心 AI 是微信小程序（wxapp）不是小游戏（wxgame），广告 SDK 只能用微信官方流量主 `<ad>` 组件 + `Taro.createRewardedVideoAd()`
+- **根因**：微信小程序沙箱无 window/document 对象,禁止加载外部脚本,穿山甲/优量汇 JS SDK 无法初始化
+- **验证**：穿山甲官方「微信小程序跳转接入方案」指的是「广告跳转到小程序」,不是「小程序内嵌穿山甲」
+- **教训**：不要尝试 webview 跳 H5 接穿山甲(个人主体不能用 webview + 审核会拒);小游戏需要版号(6-18 个月 + ¥10-50 万 + 70% 拒签率),问心 AI 走不通;情感测试类 CPM ¥15-30 已是第一梯队,不需要靠游戏化接穿山甲
+
+### 5.88 LLM 成本测算必须基于实际代码 grep,不能靠记忆（V3 商业化测算）
+
+- **问题**：最初测算时假设「多维度分析」调 LLM,实际代码 grep `chatCompletion` 只有 4 个调用点(任务生成/情绪命名/任务总结/成长报告),多维度分析当时不存在
+- **方法**：`grep -rn "chatCompletion\|streamOpenAI\|streamAnthropic" --include="*.ts" app/api` 精确盘点 LLM 调用
+- **教训**：成本测算前必须 grep 实际代码,不能凭产品想象;LLM 调用点的 maxTokens 参数决定单次成本(256/512/1024 输出 tokens 对应 ¥0.0005/0.001/0.002 V4 优惠价)
+
+### 5.89 DeepSeek V4 永久降价 1/4,LLM 成本测算基准必须用 V4 优惠价（V3 商业化测算）
+
+- **价格**：deepseek-chat V4 永久降价后,输入 ¥0.5/百万 tokens(缓存命中 ¥0.025),输出 ¥2/百万 tokens
+- **对比**：原价输入 ¥2/百万,输出 ¥8/百万,V4 价是原价 1/4
+- **单用户 30 天 LLM 成本**：V4 优惠价 ¥0.23,原价 ¥0.86(差额 3.7 倍)
+- **教训**：测算时优先用 V4 优惠价,原价作为最保守上限;DeepSeek V4 优惠是常态不是限时,可直接作为长期成本基准
+
+### 5.90 商业化三阶段策略:免费→广告→广告+订阅,UV 阈值控制开关（V3 商业化方案）
+
+- **阶段1**(UV<1000):全免费,`COMMERCIAL_STAGE=stage1`,无广告无订阅,目标攒用户
+- **阶段2**(1000≤UV<10000):看广告解锁,`COMMERCIAL_STAGE=stage2`,`TARO_APP_REWARDED_AD_ID` 必填
+- **阶段3**(UV≥10000):看广告 + ¥19.9/30天订阅,`COMMERCIAL_STAGE=stage3`
+- **开关实现**：`lib/commercial-policy.ts` 导出 `isFreeStage()` / `isAdEnabled()` / `isSubscriptionEnabled()`,环境变量 `COMMERCIAL_STAGE` 控制
+- **教训**：商业化必须分阶段,冷启动期不要急于变现;UV<1000 时开通流量主会被拒(微信要求 UV≥1000);阶段切换只改环境变量不改代码
+
+### 5.91 两层付费墙:basic(类型+得分+1天报告) / deep(多维度分析+30天报告)（V3 商业化方案）
+
+- **basic 解锁**：用户看 1 次激励视频 → 解锁情侣类型 + 6 维度得分 + 1 天报告
+- **deep 解锁**：再看 1 次激励视频 → 解锁多维度分析 + 30 天报告
+- **数据库字段**：PairSession 加 `basicUnlockMethod`/`basicUnlockedAt`/`deepUnlockMethod`/`deepUnlockedAt`/`multiDimAnalysis`/`multiDimGeneratedAt`
+- **API**：`POST /api/pair/unlock` 接收 `{ pairSessionId, tier: 'basic'|'deep', method?: 'ad'|'pay' }`
+- **教训**：两层墙比一层墙多 1 次广告收益(¥0.010/用户),且 deep 解锁的多维度分析 LLM 成本仅 ¥0.003/次,毛利率 70%+;multiDimAnalysis 必须缓存到 DB 避免重复调用 LLM
+
+### 5.92 30 天挑战断点续接:双方同步 + 中断不重新计算（V3 商业化方案）
+
+- **规则**：某天双方都 done 才算完成一天,completedDates +1;任一未 done → streakAlive=false,lastBreakDate=昨天;中断后从断点继续,不重新计算 completedDates
+- **字段位置**：DailyTask 携带截至当天的进度快照(streakAlive/lastBreakDate/completedDates),创建今日任务时从昨日任务继承累计值并按昨日完成情况更新
+- **API**：`GET /api/task/progress?coupleId=` 返回 completedDates/totalDays/streakAlive/lastBreakDate/todayCompleted/history(最近7天)
+- **教训**：进度字段放 DailyTask 而非 Couple,因为每个任务每日只创建一次(幂等),天然避免并发更新;放 Couple 需要 lastCountedDate 标记防重复计数
+
+### 5.93 报告付费墙:阶段1全免费 / 阶段2-3 未订阅看1天 / 已订阅或 deep 解锁看30天（V3 商业化方案）
+
+- **逻辑**：`canViewFullReport = stage==='stage1' || isSubscribed || deepUnlockMethod in ['ad','pay']`
+- **未授权**：只返回最近 1 天报告(让用户体验价值)
+- **授权**：返回所有 7/30 天报告
+- **教训**：付费墙必须有「免费试用」层(1 天报告),否则用户不知道付费能拿到什么;deep 解锁也要能看到 30 天报告,因为 deep 是 ¥19.9 订阅的等价替代
+
+### 5.94 定价 ¥19.9/30天 是最优解,不是越低越好也不是越高越好（V3 商业化测算）
+
+- **测算**：阶段3 15000 UV,¥9.9 转化率 2% 净利润 ¥4283,¥19.9 转化率 1.5% 净利润 ¥4745,¥39.9 转化率 0.8% 净利润 ¥4589
+- **临界点**：¥39.9 转化率必须 ≥ 0.25% 才比 ¥9.9 赚得多
+- **结论**：¥19.9 比 ¥9.9 多赚 ¥462/月,比 ¥39.9 多赚 ¥156/月,且用户心理门槛低
+- **教训**：定价不是越低转化率越高就越好,要算「价格 × 转化率」的乘积;¥9.9 用户怀疑质量,¥39.9 用户犹豫,¥19.9 是小程序付费甜点价;文案「不到一杯咖啡的钱,30 天关系成长」
+
+### 5.95 SUBSCRIPTION_PRODUCTS 改价格必须同步前后端,不能只改前端显示（V3 商业化改造）
+
+- **问题**：前端改为 ¥19.9/30天,但后端 `lib/subscription.ts` 的 `SUBSCRIPTION_PRODUCTS.monthly.amountFen=3900`(¥39),用户支付时实际订单金额是 ¥39 不是 ¥19.9
+- **修复**：`SUBSCRIPTION_PRODUCTS.monthly.amountFen` 改为 1990,description 改为「问心 AI 30 天订阅(去广告 + 全部解锁)」
+- **教训**：定价改造必须 grep 全项目 `¥39\|3900\|amountFen`,确保前端展示价 + 后端订单价 + 文档价 三处一致;`SubscriptionPlan` 类型保留 `monthly`/`yearly` 兼容(改类型影响面大),只改 SUBSCRIPTION_PRODUCTS 的 amountFen
+
+### 5.96 多 subagent 并行改造字段位置冲突:必须用 grep 验证代码实际引用（V3 商业化改造）
+
+- **问题**：subagent A 把 streakAlive/completedDates/lastBreakDate 加到 DailyTask,subagent B 报告说 today/route.ts 引用 `couple.completedDates`(tsc 错误),但实际 grep 显示代码引用的是 `task.completedDates`
+- **验证**：`grep -rn "couple\.\(completedDates\|streakAlive\|lastBreakDate\)\|task\.\(completedDates\|streakAlive\|lastBreakDate\)"` 确认实际引用
+- **教训**：subagent 报告的 tsc 错误可能是改 schema 之前的状态,改完后已自动修复;多 subagent 并行时字段位置冲突要用 grep 验证代码实际引用,不要轻信 subagent 的中间状态报告
+
 ---
 
 ## 六、关键决策记录

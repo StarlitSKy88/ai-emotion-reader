@@ -8,7 +8,15 @@
  * 2. 调 LLM 生成具体任务（buildTaskGenerationPrompt + chatCompletion）
  * 3. LLM 失败时用 fallback 任务兜底
  *
- * 返回 DailyTaskInfo（不含双方回应详情，详情走 /api/task/[taskId]）
+ * V3 商业化:30 天挑战断点续接
+ * - 创建今日任务时,基于昨天任务完成情况计算进度
+ * - 都 done → completedDates + 1, streakAlive 保持 true
+ * - 任一未 done → streakAlive = false, lastBreakDate = 昨天(如果还没设)
+ * - 不重新计算 completedDates(累计值,从昨天任务继承)
+ * - 进度字段(streakAlive/lastBreakDate/completedDates)存储在 DailyTask 上,
+ *   每日任务携带截至当天的进度快照
+ *
+ * 返回 { task: DailyTaskInfo, progress: ChallengeProgress }
  */
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
@@ -26,6 +34,7 @@ import {
 } from '@/lib/task-service';
 import type {
   ApiResponse,
+  ChallengeProgress,
   DimensionScores,
   RelationshipStage,
   TaskGenerationInput,
@@ -35,6 +44,70 @@ import type {
 /** 任务生成系统提示词 */
 const TASK_GEN_SYSTEM_PROMPT =
   '你是「问心 AI」的每日任务生成器。严格按用户要求的 JSON 格式输出，不要任何额外文字、不要 markdown 代码块。';
+
+/** 30 天挑战总天数 */
+const CHALLENGE_TOTAL_DAYS = 30;
+
+/** V3 进度快照(从昨日任务继承并更新) */
+interface ProgressSnapshot {
+  completedDates: number;
+  streakAlive: boolean;
+  lastBreakDate: Date | null;
+}
+
+/**
+ * 基于昨天任务完成情况计算今日进度快照
+ * - 都 done → completedDates + 1, streakAlive = true
+ * - 任一未 done → streakAlive = false, lastBreakDate = 昨天(如果还没设)
+ * - 不重新计算 completedDates(累计值,从昨天继承)
+ *
+ * @param coupleId 情侣 ID
+ * @param todayDateObj 今日日期(UTC 午夜)
+ */
+async function calculateProgressFromYesterday(
+  coupleId: string,
+  todayDateObj: Date,
+): Promise<ProgressSnapshot> {
+  const yesterday = new Date(todayDateObj);
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+
+  const yesterdayTask = await prisma.dailyTask.findUnique({
+    where: { coupleId_date: { coupleId, date: yesterday } },
+    select: {
+      statusA: true,
+      statusB: true,
+      completedDates: true,
+      streakAlive: true,
+      lastBreakDate: true,
+    },
+  });
+
+  // 继承昨天的累计值
+  let completedDates = yesterdayTask?.completedDates ?? 0;
+  let streakAlive = yesterdayTask?.streakAlive ?? true;
+  let lastBreakDate = yesterdayTask?.lastBreakDate ?? null;
+
+  if (yesterdayTask) {
+    const aDoneYesterday = yesterdayTask.statusA === 'done';
+    const bDoneYesterday = yesterdayTask.statusB === 'done';
+    const bothDoneYesterday = aDoneYesterday && bDoneYesterday;
+
+    if (bothDoneYesterday) {
+      // 双方都 done → completedDates + 1, streakAlive 保持 true
+      completedDates += 1;
+      streakAlive = true;
+    } else {
+      // 任一未 done → streakAlive = false, lastBreakDate = 昨天(如果还没设)
+      streakAlive = false;
+      if (!lastBreakDate) {
+        lastBreakDate = yesterday;
+      }
+    }
+  }
+  // 昨天无任务(挑战未开始/跨天首次访问) → 继承默认值
+
+  return { completedDates, streakAlive, lastBreakDate };
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -70,8 +143,9 @@ export async function GET(request: NextRequest) {
 
     let task = existing;
     if (!task) {
-      // 4. 不存在则生成
-      task = await generateAndCreateTask(couple, dateObj, timezone);
+      // 4. 不存在则生成(同时计算 V3 进度快照)
+      const progress = await calculateProgressFromYesterday(couple.id, dateObj);
+      task = await generateAndCreateTask(couple, dateObj, timezone, progress);
     }
 
     if (!task) {
@@ -81,8 +155,18 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 5. 返回 DailyTaskInfo（不含回应详情）
-    const data = buildDailyTaskInfo(task, userId, couple, false);
+    // 5. 从今日任务读取 V3 进度快照
+    const progress: ChallengeProgress = {
+      completedDates: task.completedDates,
+      totalDays: CHALLENGE_TOTAL_DAYS,
+      streakAlive: task.streakAlive,
+      lastBreakDate: task.lastBreakDate ? task.lastBreakDate.toISOString() : null,
+      todayCompleted: task.statusA === 'done' && task.statusB === 'done',
+    };
+
+    // 6. 返回 { task: DailyTaskInfo, progress }
+    const taskInfo = buildDailyTaskInfo(task, userId, couple, false);
+    const data = { task: taskInfo, progress };
     return NextResponse.json<ApiResponse<typeof data>>({
       success: true,
       data,
@@ -104,6 +188,7 @@ async function generateAndCreateTask(
   couple: Awaited<ReturnType<typeof getCoupleForUser>>,
   dateObj: Date,
   timezone: string,
+  progress: ProgressSnapshot,
 ) {
   if (!couple || !couple.pairSession) return null;
 
@@ -113,7 +198,7 @@ async function generateAndCreateTask(
 
   // 维度分数不完整 → 直接用 fallback（不调 LLM）
   if (!isValidDimensions(dimsA) || !isValidDimensions(dimsB)) {
-    return createFallbackTask(couple, dateObj, timezone);
+    return createFallbackTask(couple, dateObj, timezone, progress);
   }
 
   // 查昨日任务完成情况（用于不对称检测）
@@ -178,6 +263,10 @@ async function generateAndCreateTask(
           sourceDimension: plan.sourceDimension,
           targetDimension: plan.targetDimension,
           estimatedMin: parsed.estimatedMin || plan.fallbackTask.estimatedMin,
+          // V3 进度快照
+          completedDates: progress.completedDates,
+          streakAlive: progress.streakAlive,
+          lastBreakDate: progress.lastBreakDate,
         },
         include: { responses: true },
       });
@@ -187,7 +276,7 @@ async function generateAndCreateTask(
     // LLM 调用失败，降级 fallback
   }
 
-  return createFallbackTask(couple, dateObj, timezone, plan.fallbackTask);
+  return createFallbackTask(couple, dateObj, timezone, progress, plan.fallbackTask);
 }
 
 /**
@@ -197,6 +286,7 @@ async function createFallbackTask(
   couple: NonNullable<Awaited<ReturnType<typeof getCoupleForUser>>>,
   dateObj: Date,
   timezone: string,
+  progress: ProgressSnapshot,
   forcedFallback?: {
     title: string;
     description: string;
@@ -231,6 +321,10 @@ async function createFallbackTask(
         sourceDimension: fallback.sourceDimension,
         targetDimension: fallback.targetDimension || null,
         estimatedMin: fallback.estimatedMin,
+        // V3 进度快照
+        completedDates: progress.completedDates,
+        streakAlive: progress.streakAlive,
+        lastBreakDate: progress.lastBreakDate,
       },
       include: { responses: true },
     });

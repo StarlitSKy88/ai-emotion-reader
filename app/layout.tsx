@@ -11,7 +11,7 @@ import './globals.css';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://wenxin.taomyst.com';
 const SITE_NAME = '问心 AI';
 const SITE_DESCRIPTION =
-  '基于心理学模型的情侣关系成长工具。每日 3 分钟任务 + 6 维度关系类型 + 7/30 天成长报告。¥39/月 ¥298/年订阅。';
+  '基于心理学模型的情侣关系成长工具。每日 3 分钟任务 + 6 维度关系类型 + 7/30 天成长报告。¥19.9/30天订阅(去广告 + 全部解锁)。';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -87,22 +87,15 @@ const jsonLd = {
 const productJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Product',
-  name: '问心 AI 年度订阅',
-  description: '情侣关系成长工具订阅，含每日任务 + 关系类型 + 7/30 天成长报告',
+  name: '问心 AI 30 天订阅',
+  description: '情侣关系成长工具订阅,含每日任务 + 关系类型 + 多维度分析 + 30 天成长报告',
   brand: { '@type': 'Brand', name: SITE_NAME },
   offers: [
     {
       '@type': 'Offer',
-      price: '39',
+      price: '19.9',
       priceCurrency: 'CNY',
-      description: '月度订阅',
-      availability: 'https://schema.org/InStock',
-    },
-    {
-      '@type': 'Offer',
-      price: '298',
-      priceCurrency: 'CNY',
-      description: '年度订阅（省 ¥170）',
+      description: '30 天订阅(去广告 + 全部解锁)',
       availability: 'https://schema.org/InStock',
     },
   ],
