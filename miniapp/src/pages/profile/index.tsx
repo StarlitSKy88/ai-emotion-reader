@@ -1,7 +1,7 @@
 /**
  * 我的页（tab）
  * - 用户信息（昵称、头像、性别）
- * - 订阅状态（¥39/月 或 ¥298/年）
+ * - 订阅状态（¥19.9 / 30 天,V3 单一产品）
  * - 我的关系（已配对/未配对）
  * - 设置：清除缓存、关于、反馈
  */
@@ -57,7 +57,7 @@ export default function ProfilePage() {
     }
     const [u, s, p] = await Promise.all([
       getCurrentUser(),
-      http.get<SubscriptionInfo>('/api/subscription').catch(() => null),
+      http.get<SubscriptionInfo>('/api/subscription/status').catch(() => null),
       http.get<PairSummary>('/api/pair/mine').catch(() => null),
     ]);
     setUser(u);
@@ -73,7 +73,7 @@ export default function ProfilePage() {
   };
 
   /** 订阅：跳转到订阅管理页 */
-  const goSubscribe = (_plan: 'monthly' | 'yearly') => {
+  const goSubscribe = () => {
     Taro.navigateTo({ url: '/pages/subscription/index' });
   };
 
@@ -218,14 +218,14 @@ export default function ProfilePage() {
         </View>
       )}
 
-      {/* 订阅 */}
+      {/* 订阅 · V3 单一产品 ¥19.9/30天 */}
       {user && (
         <View className='card'>
           <Text className='section-title'>订阅状态</Text>
           {sub && sub.plan !== 'free' ? (
             <View>
               <Text className='sub-active'>
-                {sub.plan === 'monthly' ? '月度订阅' : '年度订阅'} 已激活
+                30 天畅享 已激活
               </Text>
               {sub.expiresAt && (
                 <Text className='sub-expire text-muted'>
@@ -235,19 +235,12 @@ export default function ProfilePage() {
             </View>
           ) : (
             <View className='sub-plans'>
-              <View className='plan-item'>
-                <Text className='plan-name'>月度</Text>
-                <Text className='plan-price'>¥39/月</Text>
-                <Button className='btn-ghost btn-sm' onClick={() => goSubscribe('monthly')}>
-                  订阅
-                </Button>
-              </View>
               <View className='plan-item recommend'>
-                <Text className='plan-name'>年度</Text>
-                <Text className='plan-price'>¥298/年</Text>
-                <Text className='plan-tag'>省 ¥170</Text>
-                <Button className='btn-primary btn-sm' onClick={() => goSubscribe('yearly')}>
-                  订阅
+                <Text className='plan-name'>30 天畅享</Text>
+                <Text className='plan-price'>¥19.9 / 30 天</Text>
+                <Text className='plan-tag'>去广告 + 全部解锁</Text>
+                <Button className='btn-primary btn-sm' onClick={goSubscribe}>
+                  立即订阅
                 </Button>
               </View>
             </View>

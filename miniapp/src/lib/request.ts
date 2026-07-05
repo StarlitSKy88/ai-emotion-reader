@@ -25,9 +25,16 @@ interface RequestOptions {
 /** 拼接完整 URL */
 function buildUrl(path: string): string {
   // API_BASE_URL 由 Taro 编译时注入（见 config/dev.ts、config/prod.ts）
+  // 形如 'https://wenxin.taomyst.top/api'
   const base = (typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : '') as string;
   if (path.startsWith('http')) return path;
-  return `${base}${path.startsWith('/') ? path : `/${path}`}`;
+  // 调用方传的 path 可能是 '/api/test/submit' 或 '/auth/me'
+  // base 已含 '/api',去重避免拼成 '/api/api/...'
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  if (normalizedPath.startsWith('/api/') && base.endsWith('/api')) {
+    return `${base}${normalizedPath.slice(4)}`; // 去掉 path 开头的 '/api'
+  }
+  return `${base}${normalizedPath}`;
 }
 
 /** 获取 token */
