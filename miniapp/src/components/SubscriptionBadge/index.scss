@@ -1,27 +1,27 @@
 /**
  * 订阅状态徽章样式
- * V3 深色电影感:cream 主色 + 半透明背景
+ * 暖阳玫瑰:暖玫瑰主色 + 半透明背景
  */
 .subscription-badge {
   display: inline-flex;
   align-items: center;
   gap: 8rpx;
   padding: 8rpx 20rpx;
-  background: rgba(222, 219, 200, 0.12);
-  border: 1rpx solid #DEDBC8;
+  background: rgba(232, 117, 138, 0.12);
+  border: 1rpx solid #E8758A;
   border-radius: 999rpx;
   margin: 0 auto 24rpx;
 }
 
 .badge-heart {
   font-size: 24rpx;
-  color: #DEDBC8;
+  color: #E8758A;
   line-height: 1;
 }
 
 .badge-text {
   font-size: 24rpx;
-  color: #DEDBC8;
+  color: #E8758A;
   font-weight: 500;
   line-height: 1;
 }

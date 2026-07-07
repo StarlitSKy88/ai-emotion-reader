@@ -13,6 +13,7 @@ export default defineAppConfig({
     'pages/task/chat',
     'pages/subscription/index',
     'pages/crisis/index',
+    'pages/simulation/index',
   ],
   window: {
     backgroundTextStyle: 'light',
@@ -23,7 +24,7 @@ export default defineAppConfig({
   },
   tabBar: {
     color: '#999999',
-    selectedColor: '#DEDBC8',
+    selectedColor: '#E8758A',
     backgroundColor: '#FFFFFF',
     borderStyle: 'white',
     list: [

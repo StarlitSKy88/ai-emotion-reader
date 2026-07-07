@@ -274,7 +274,7 @@ export default function TestPage() {
     <View className='test'>
       {/* 进度条 + 切换性别入口 */}
       <View className='progress-wrap'>
-        <Progress percent={percent} strokeWidth={6} activeColor='#DEDBC8' />
+        <Progress percent={percent} strokeWidth={6} activeColor='#E8758A' />
         <Text className='progress-text'>
           {answeredCount} / {total}
         </Text>

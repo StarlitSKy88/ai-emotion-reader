@@ -55,8 +55,12 @@ export interface ShareCanvasProps {
 const CANVAS_WIDTH = 600; // 设计稿宽
 // W-SH-1：原 900 + 160 给底部小程序码（120）+ 引导文字（20）+ 上下边距（20）
 const CANVAS_HEIGHT = 1060; // 设计稿高
-const COLOR_A = '#DEDBC8';
-const COLOR_B = '#7A7660';
+const COLOR_A = '#E8758A';
+const COLOR_B = '#9D2B4B';
+const COLOR_BG = '#FFF8F5';
+const COLOR_TEXT = '#2D1B2E';
+const COLOR_MUTED = '#8B7B80';
+const COLOR_BORDER = '#F0E0E5';
 const DIMENSIONS = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'] as const;
 const DIM_LABELS: Record<string, string> = {
   D1: '依恋',
@@ -278,6 +282,9 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
   const draw = useCallback(async (): Promise<string> => {
     setGenerating(true);
     try {
+      // 等待 Canvas 挂载完成（visible 切换后需要一帧）
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       // 1. 预下载头像
       const [myAvatarPath, partnerAvatarPath] = await Promise.all([
         downloadImage(myAvatar || ''),
@@ -287,11 +294,11 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
       // 2. 获取 Canvas 上下文
       const ctx = Taro.createCanvasContext(canvasId);
 
-      // 3. 背景：白色 + 顶部粉色装饰带
-      ctx.setFillStyle('#FFFFFF');
+      // 3. 背景：暖玫瑰色 + 顶部粉色装饰带
+      ctx.setFillStyle(COLOR_BG);
       ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
       // 顶部装饰带
-      ctx.setFillStyle('#FFE5EC');
+      ctx.setFillStyle('#F4DDE2');
       ctx.fillRect(0, 0, CANVAS_WIDTH, 200);
 
       const centerX = CANVAS_WIDTH / 2;
@@ -310,31 +317,33 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
       ctx.fillText('·', centerX, avatarY);
 
       // 5. 昵称（头像下方）
-      ctx.setFillStyle('#333333');
+      ctx.setFillStyle(COLOR_TEXT);
       ctx.setFontSize(24);
       ctx.setTextAlign('center');
       ctx.setTextBaseline('alphabetic');
       ctx.fillText(myNickname || '我', centerX - avatarOffsetX, avatarY + avatarR + 36);
       ctx.fillText(partnerNickname || 'TA', centerX + avatarOffsetX, avatarY + avatarR + 36);
 
-      // 6. 类型 emoji（大）
-      // W-1：同性组合用通用符号替代,避免类型识别
+      // 6. 类型视觉符号（大）
+      // emoji 字段为空时用心形符号替代，确保视觉不空白
       ctx.setFontSize(96);
       ctx.setTextAlign('center');
       ctx.setTextBaseline('middle');
-      if (!isSameSex && typeEmoji) { ctx.fillText(typeEmoji, centerX, 320); }
+      const displayEmoji = (!isSameSex && typeEmoji) ? typeEmoji : '♥';
+      ctx.setFillStyle(COLOR_A);
+      ctx.fillText(displayEmoji, centerX, 320);
 
       // 7. 类型名（同性组合不显示，只显示一句话）
       ctx.setTextBaseline('alphabetic');
       if (!isSameSex) {
-        ctx.setFillStyle('#333333');
+        ctx.setFillStyle(COLOR_TEXT);
         ctx.setFontSize(36);
         ctx.fillText(typeName, centerX, 380);
       }
 
       // 8. 一句话标签
       // W-1：同性组合用通用占位文案，避免 oneLiner 暴露类型特征
-      ctx.setFillStyle('#666666');
+      ctx.setFillStyle(COLOR_MUTED);
       ctx.setFontSize(24);
       ctx.fillText(
         isSameSex ? '我们的关系类型有点特别' : typeOneLiner,
@@ -347,10 +356,10 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
       ctx.setFontSize(72);
       ctx.setTextAlign('left');
       ctx.fillText(`${compatibility}`, centerX - 60, 510);
-      ctx.setFillStyle('#999999');
+      ctx.setFillStyle(COLOR_MUTED);
       ctx.setFontSize(24);
       ctx.fillText('/ 100', centerX + 60, 510);
-      ctx.setFillStyle('#999999');
+      ctx.setFillStyle(COLOR_MUTED);
       ctx.setFontSize(20);
       ctx.setTextAlign('center');
       ctx.fillText('默契度', centerX, 540);
@@ -365,18 +374,18 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
         ctx.setTextBaseline('middle');
         ctx.setFillStyle(COLOR_A);
         ctx.fillRect(centerX - 80, 810, 16, 16);
-        ctx.setFillStyle('#666666');
+        ctx.setFillStyle(COLOR_MUTED);
         ctx.fillText('我', centerX - 58, 818);
         ctx.setFillStyle(COLOR_B);
         ctx.fillRect(centerX + 20, 810, 16, 16);
-        ctx.setFillStyle('#666666');
+        ctx.setFillStyle(COLOR_MUTED);
         ctx.fillText('TA', centerX + 42, 818);
       }
 
       // 11. 朋友圈文案（小字，雷达图下方或默契度下方）
       // W-9：多行绘制（最多 2 行，每行 18 字符），避免 24 字符截断丢失核心情绪
       if (momentsCopy) {
-        ctx.setFillStyle('#888888');
+        ctx.setFillStyle(COLOR_MUTED);
         ctx.setFontSize(20);
         ctx.setTextAlign('center');
         ctx.setTextBaseline('alphabetic');
@@ -384,7 +393,7 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
       }
 
       // 12. 底部品牌
-      ctx.setFillStyle('#999999');
+      ctx.setFillStyle(COLOR_MUTED);
       ctx.setFontSize(20);
       ctx.setTextAlign('center');
       ctx.setTextBaseline('alphabetic');
@@ -399,7 +408,7 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
           ctx.drawImage(qrPath, centerX - 60, 900, 120, 120);
         }
         // 引导文字（14px，居中，灰色）
-        ctx.setFillStyle('#999999');
+        ctx.setFillStyle(COLOR_MUTED);
         ctx.setFontSize(14);
         ctx.setTextAlign('center');
         ctx.setTextBaseline('alphabetic');
@@ -509,7 +518,7 @@ const ShareCanvas = forwardRef<ShareCanvasHandle, ShareCanvasProps>(function Sha
           </View>
           <Canvas
             canvasId={canvasId}
-            style={{ width: `${CANVAS_WIDTH}rpx`, height: `${CANVAS_HEIGHT}rpx` }}
+            style={{ width: `${CANVAS_WIDTH}px`, height: `${CANVAS_HEIGHT}px` }}
             className='share-canvas-el'
           />
           <View className='share-canvas-actions'>

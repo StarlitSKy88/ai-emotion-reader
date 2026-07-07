@@ -24,7 +24,7 @@
   width: 120rpx;
   height: 120rpx;
   border-radius: 50%;
-  background: #212121;
+  background: #F0E0E5;
   flex-shrink: 0;
 }
 
@@ -36,13 +36,13 @@
   display: block;
   font-size: 32rpx;
   font-weight: 600;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 8rpx;
 }
 
 .sub {
   font-size: 24rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
 }
 
 .login-cta {
@@ -53,7 +53,7 @@
   display: block;
   font-size: 30rpx;
   font-weight: 600;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 24rpx;
 }
 
@@ -62,7 +62,7 @@
   display: block;
   font-size: 26rpx;
   font-weight: 600;
-  color: #737373;
+  color: #8B7B80;
   margin-bottom: 16rpx;
 }
 
@@ -86,13 +86,13 @@
   display: block;
   font-size: 30rpx;
   font-weight: 600;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 4rpx;
 }
 
 .pair-desc {
   font-size: 24rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
 }
 
 .btn-sm {
@@ -106,14 +106,14 @@
 .sub-active {
   display: block;
   font-size: 28rpx;
-  color: #DEDBC8;
+  color: #E8758A;
   font-weight: 600;
   margin-bottom: 4rpx;
 }
 
 .sub-expire {
   font-size: 24rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
 }
 
 .sub-plans {
@@ -125,20 +125,20 @@
   flex: 1;
   text-align: center;
   padding: 24rpx 16rpx;
-  border: 2rpx solid #212121;
+  border: 2rpx solid #F0E0E5;
   border-radius: 12rpx;
   position: relative;
 }
 
 .plan-item.recommend {
-  border-color: #DEDBC8;
-  background: #212121;
+  border-color: #E8758A;
+  background: #F0E0E5;
 }
 
 .plan-name {
   display: block;
   font-size: 26rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
   margin-bottom: 8rpx;
 }
 
@@ -146,14 +146,14 @@
   display: block;
   font-size: 36rpx;
   font-weight: 700;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 16rpx;
 }
 
 .plan-tag {
   display: block;
   font-size: 22rpx;
-  color: #DEDBC8;
+  color: #E8758A;
   margin-bottom: 12rpx;
 }
 
@@ -165,8 +165,8 @@
 .setting-item {
   padding: 32rpx;
   font-size: 28rpx;
-  color: #E1E0CC;
-  border-bottom: 1rpx solid #212121;
+  color: #2D1B2E;
+  border-bottom: 1rpx solid #F0E0E5;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -178,11 +178,11 @@
 
 .setting-value {
   font-size: 26rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
 }
 
 .setting-item.danger {
-  color: #DEDBC8;
+  color: #E8758A;
   text-align: center;
   justify-content: center;
 }
@@ -190,7 +190,7 @@
 .card-desc {
   display: block;
   font-size: 26rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
   line-height: 1.7;
   margin-bottom: 24rpx;
 }

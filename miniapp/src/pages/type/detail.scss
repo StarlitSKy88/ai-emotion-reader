@@ -20,8 +20,8 @@
 }
 
 .type-card.rare {
-  background: #101010;
-  border: 2rpx solid #FFD700;
+  background: #FFFFFF;
+  border: 2rpx solid #C9A961;
 }
 
 .type-visual-wrap {
@@ -35,7 +35,7 @@
   display: block;
   font-size: 44rpx;
   font-weight: 700;
-  color: #DEDBC8;
+  color: #E8758A;
   margin-bottom: 16rpx;
 }
 
@@ -49,22 +49,22 @@
 .type-rarity {
   display: inline-block;
   font-size: 22rpx;
-  color: #737373;
+  color: #8B7B80;
   padding: 4rpx 16rpx;
-  background: #212121;
+  background: #F0E0E5;
   border-radius: 12rpx;
 }
 
 .type-card.rare .type-rarity {
-  color: #FFD700;
-  background: #212121;
+  color: #C9A961;
+  background: #F0E0E5;
 }
 
 .type-exclusive {
   display: inline-block;
   font-size: 22rpx;
-  color: #000000;
-  background: #DEDBC8;
+  color: #FFF8F5;
+  background: #E8758A;
   padding: 4rpx 16rpx;
   border-radius: 12rpx;
 }
@@ -80,7 +80,7 @@
 .type-ratio {
   display: block;
   font-size: 24rpx;
-  color: #737373;
+  color: #8B7B80;
 }
 
 /* 内容区段 */
@@ -88,7 +88,7 @@
   display: block;
   font-size: 30rpx;
   font-weight: 600;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 16rpx;
 }
 
@@ -96,11 +96,11 @@
   display: block;
   font-size: 28rpx;
   line-height: 1.8;
-  color: #E1E0CC;
+  color: #2D1B2E;
 }
 
 .share-copy {
-  color: #DEDBC8;
+  color: #E8758A;
   font-style: italic;
   margin-bottom: 24rpx;
 }
@@ -113,7 +113,7 @@
 .radar-tip {
   display: block;
   font-size: 22rpx;
-  color: #737373;
+  color: #8B7B80;
   margin-top: 16rpx;
 }
 
@@ -121,15 +121,15 @@
 .restricted-card {
   text-align: center;
   padding: 48rpx 32rpx;
-  background: #101010;
-  border: 2rpx solid #DEDBC8;
+  background: #FFFFFF;
+  border: 2rpx solid #E8758A;
 }
 
 .restricted-title {
   display: block;
   font-size: 32rpx;
   font-weight: 600;
-  color: #DEDBC8;
+  color: #E8758A;
   margin-bottom: 16rpx;
 }
 
@@ -149,7 +149,7 @@
   display: block;
   font-size: 32rpx;
   font-weight: 600;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 16rpx;
 }
 

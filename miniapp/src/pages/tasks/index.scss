@@ -13,8 +13,8 @@
 /* ===== V3 30 天挑战进度卡 ===== */
 .progress-card {
   padding: 32rpx;
-  background: #101010;
-  border: 1rpx solid #DEDBC8;
+  background: #FFFFFF;
+  border: 1rpx solid #E8758A;
 }
 
 .progress-header {
@@ -27,19 +27,19 @@
 .progress-title {
   font-size: 30rpx;
   font-weight: 600;
-  color: #DEDBC8;
+  color: #E8758A;
 }
 
 .progress-count {
   font-size: 28rpx;
   font-weight: 500;
-  color: #E1E0CC;
+  color: #2D1B2E;
 }
 
 .progress-bar {
   width: 100%;
   height: 12rpx;
-  background: #212121;
+  background: #F0E0E5;
   border-radius: 999rpx;
   overflow: hidden;
   margin-bottom: 16rpx;
@@ -47,7 +47,7 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #DEDBC8, #E1E0CC);
+  background: linear-gradient(90deg, #E8758A, #2D1B2E);
   border-radius: 999rpx;
   transition: width 0.3s ease;
 }
@@ -60,16 +60,16 @@
 }
 
 .streak-alive {
-  color: #DEDBC8;
+  color: #E8758A;
   font-weight: 500;
 }
 
 .streak-broken {
-  color: #A3A3A3;
+  color: #8B7B80;
 }
 
 .today-done {
-  color: #737373;
+  color: #8B7B80;
 }
 
 .tasks .card-title {
@@ -77,14 +77,14 @@
   font-size: 32rpx;
   font-weight: 600;
   text-align: center;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 16rpx;
 }
 
 .tasks .card-desc {
   display: block;
   font-size: 26rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
   line-height: 1.7;
   margin-bottom: 32rpx;
   text-align: center;
@@ -109,21 +109,21 @@
   display: block;
   font-size: 56rpx;
   font-weight: 700;
-  color: #DEDBC8;
+  color: #E8758A;
   line-height: 1;
 }
 
 .summary-label {
   display: block;
   font-size: 22rpx;
-  color: #737373;
+  color: #8B7B80;
   margin-top: 8rpx;
 }
 
 .summary-divider {
   width: 1rpx;
   height: 64rpx;
-  background: #212121;
+  background: #F0E0E5;
 }
 
 /* 今日任务 */
@@ -140,27 +140,27 @@
 
 .task-date {
   font-size: 24rpx;
-  color: #737373;
+  color: #8B7B80;
 }
 
 .task-cat {
   font-size: 22rpx;
-  color: #DEDBC8;
+  color: #E8758A;
   padding: 4rpx 12rpx;
-  background: #212121;
+  background: #F0E0E5;
   border-radius: 8rpx;
 }
 
 .task-dim {
   font-size: 22rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
 }
 
 .task-title {
   display: block;
   font-size: 34rpx;
   font-weight: 600;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 12rpx;
 }
 
@@ -168,7 +168,7 @@
   display: block;
   font-size: 28rpx;
   line-height: 1.7;
-  color: #A3A3A3;
+  color: #8B7B80;
   margin-bottom: 24rpx;
 }
 
@@ -181,7 +181,7 @@
 
 .task-duration {
   font-size: 24rpx;
-  color: #A3A3A3;
+  color: #8B7B80;
 }
 
 .task-footer .btn-primary,
@@ -194,20 +194,20 @@
   display: flex;
   gap: 32rpx;
   padding: 16rpx 0;
-  border-top: 1rpx solid #212121;
+  border-top: 1rpx solid #F0E0E5;
   font-size: 26rpx;
 }
 
 .done-status .done {
-  color: #DEDBC8;
+  color: #E8758A;
 }
 
 .done-status .pending {
-  color: #737373;
+  color: #8B7B80;
 }
 
 .done-status .skipped {
-  color: #525252;
+  color: #8B7B80;
 }
 
 /* "查看详情 →" 链接 */
@@ -220,8 +220,8 @@
 .insight-banner {
   margin-top: 16rpx;
   padding: 24rpx;
-  background: #212121;
-  border: 1rpx solid #DEDBC8;
+  background: #F0E0E5;
+  border: 1rpx solid #E8758A;
   border-radius: 12rpx;
 }
 
@@ -229,8 +229,8 @@
 .insight-card {
   margin-top: 16rpx;
   padding: 24rpx;
-  background: #212121;
-  border: 1rpx solid #DEDBC8;
+  background: #F0E0E5;
+  border: 1rpx solid #E8758A;
   border-radius: 12rpx;
 }
 
@@ -238,7 +238,7 @@
   display: block;
   font-size: 24rpx;
   font-weight: 600;
-  color: #DEDBC8;
+  color: #E8758A;
   margin-bottom: 8rpx;
 }
 
@@ -246,7 +246,7 @@
   display: block;
   font-size: 26rpx;
   line-height: 1.7;
-  color: #E1E0CC;
+  color: #2D1B2E;
 }
 
 /* 历史 */
@@ -254,13 +254,13 @@
   display: block;
   font-size: 28rpx;
   font-weight: 600;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 16rpx;
 }
 
 .history-item {
   padding: 16rpx 0;
-  border-bottom: 1rpx solid #212121;
+  border-bottom: 1rpx solid #F0E0E5;
 }
 
 .history-item:last-child {
@@ -275,16 +275,16 @@
 
 .hist-date {
   font-size: 22rpx;
-  color: #737373;
+  color: #8B7B80;
 }
 
 .hist-status {
   font-size: 22rpx;
-  color: #737373;
+  color: #8B7B80;
 }
 
 .hist-title {
   display: block;
   font-size: 26rpx;
-  color: #E1E0CC;
+  color: #2D1B2E;
 }

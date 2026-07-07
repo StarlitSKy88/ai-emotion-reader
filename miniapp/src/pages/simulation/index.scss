@@ -1,0 +1,505 @@
+/* ===== 30 天挑战模拟页 · 暖玫瑰配色 =====
+   背景 #FFF8F5 / 卡片 #FFFFFF / 主色 #E8758A / 文字 #2D1B2E */
+
+.sim {
+  min-height: 100vh;
+  background: #FFF8F5;
+  padding: 24rpx 24rpx 64rpx;
+  box-sizing: border-box;
+}
+
+/* 章节标题 */
+.section-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #2D1B2E;
+  margin: 32rpx 0 20rpx;
+  padding-left: 16rpx;
+  border-left: 6rpx solid #E8758A;
+}
+
+/* ===== 顶部统计卡 ===== */
+.stats-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 32rpx 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(232, 117, 138, 0.12);
+}
+
+.stats-grid {
+  display: flex;
+  align-items: stretch;
+}
+
+.stats-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stats-num {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #E8758A;
+  line-height: 1.1;
+}
+
+.stats-num .unit {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #B89A9F;
+  margin-left: 4rpx;
+}
+
+.stats-label {
+  display: block;
+  font-size: 22rpx;
+  color: #8A6B72;
+  margin-top: 8rpx;
+}
+
+.stats-divider {
+  width: 1rpx;
+  background: #F3E5E8;
+  margin: 8rpx 0;
+}
+
+.stats-progress {
+  margin-top: 28rpx;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 16rpx;
+  background: #FBEDEF;
+  border-radius: 999rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #E8758A, #F2A0AE);
+  border-radius: 999rpx;
+}
+
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #8A6B72;
+}
+
+.progress-meta .breakpoints {
+  color: #E8758A;
+  font-weight: 500;
+}
+
+/* ===== 情侣类型卡 ===== */
+.type-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  margin-top: 24rpx;
+  border-left: 8rpx solid #E8758A;
+}
+
+.type-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.type-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #2D1B2E;
+}
+
+.type-code {
+  font-size: 22rpx;
+  color: #B89A9F;
+}
+
+.type-line {
+  display: block;
+  font-size: 26rpx;
+  color: #6B4A52;
+  line-height: 1.6;
+}
+
+.type-meta {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #8A6B72;
+}
+
+.type-meta .tag {
+  background: #FBEDEF;
+  color: #E8758A;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+}
+
+/* ===== 30 天时间轴 ===== */
+.timeline {
+  margin-top: 8rpx;
+}
+
+.day-row {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 20rpx 20rpx;
+  margin-bottom: 14rpx;
+  box-shadow: 0 2rpx 12rpx rgba(45, 27, 46, 0.04);
+}
+
+.day-row.breakpoint {
+  background: #FFF0EE;
+  border: 1rpx solid #F2C2BD;
+}
+
+.day-badge {
+  flex-shrink: 0;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 16rpx;
+  background: #FBEDEF;
+  color: #E8758A;
+  font-size: 24rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+}
+
+.day-row.breakpoint .day-badge {
+  background: #E8758A;
+  color: #FFFFFF;
+}
+
+.day-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.day-title {
+  display: block;
+  font-size: 27rpx;
+  font-weight: 600;
+  color: #2D1B2E;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day-sub {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 8rpx;
+  flex-wrap: wrap;
+}
+
+.day-date {
+  font-size: 22rpx;
+  color: #8A6B72;
+}
+
+.day-tag {
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+  background: #F5EDE7;
+  color: #8A6B72;
+}
+
+.day-tag.diff-easy {
+  background: #E8F5E9;
+  color: #4A8A5C;
+}
+
+.day-tag.diff-medium {
+  background: #FFF4E0;
+  color: #B8821F;
+}
+
+.day-tag.diff-hard {
+  background: #FBEDEF;
+  color: #C24A5E;
+}
+
+.day-right {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8rpx;
+  margin-left: 16rpx;
+}
+
+.day-harmony {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #E8758A;
+}
+
+.day-harmony.skipped {
+  color: #C2B8BB;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.day-status {
+  display: flex;
+  gap: 8rpx;
+}
+
+.status-dot {
+  font-size: 20rpx;
+  padding: 2rpx 10rpx;
+  border-radius: 6rpx;
+}
+
+.status-dot.done {
+  background: #E8F5E9;
+  color: #4A8A5C;
+}
+
+.status-dot.skipped {
+  background: #F0E0E2;
+  color: #B07078;
+}
+
+/* ===== 断点续接说明 ===== */
+.breakpoint-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  margin-top: 8rpx;
+  border-top: 4rpx solid #E8758A;
+}
+
+.bp-intro {
+  display: block;
+  font-size: 25rpx;
+  color: #6B4A52;
+  line-height: 1.7;
+  margin-bottom: 20rpx;
+}
+
+.bp-item {
+  background: #FFF0EE;
+  border-radius: 14rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.bp-item:last-child {
+  margin-bottom: 0;
+}
+
+.bp-head {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-bottom: 8rpx;
+}
+
+.bp-day {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #E8758A;
+}
+
+.bp-skipper {
+  font-size: 22rpx;
+  color: #6B4A52;
+}
+
+.bp-reason {
+  display: block;
+  font-size: 24rpx;
+  color: #6B4A52;
+  line-height: 1.6;
+  margin-bottom: 8rpx;
+}
+
+.bp-flow {
+  display: block;
+  font-size: 22rpx;
+  color: #8A6B72;
+  line-height: 1.6;
+}
+
+.bp-flow .alive {
+  color: #4A8A5C;
+  font-weight: 500;
+}
+
+.bp-flow .broken {
+  color: #C24A5E;
+  font-weight: 500;
+}
+
+/* ===== 典型日期详情 ===== */
+.detail-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(45, 27, 46, 0.04);
+}
+
+.detail-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.detail-day {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #E8758A;
+}
+
+.detail-date {
+  font-size: 24rpx;
+  color: #8A6B72;
+}
+
+.detail-task-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2D1B2E;
+  margin-bottom: 8rpx;
+}
+
+.detail-task-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #6B4A52;
+  line-height: 1.7;
+  margin-bottom: 16rpx;
+}
+
+.detail-meta {
+  display: flex;
+  gap: 16rpx;
+  font-size: 22rpx;
+  color: #8A6B72;
+  margin-bottom: 16rpx;
+  flex-wrap: wrap;
+}
+
+.detail-status-row {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 16rpx;
+  font-size: 24rpx;
+}
+
+.detail-status-row .label {
+  color: #8A6B72;
+}
+
+.detail-status-row .val-done {
+  color: #4A8A5C;
+  font-weight: 500;
+}
+
+.detail-status-row .val-skipped {
+  color: #C24A5E;
+  font-weight: 500;
+}
+
+.detail-harmony {
+  background: #FBEDEF;
+  border-radius: 14rpx;
+  padding: 20rpx;
+  margin-bottom: 12rpx;
+}
+
+.detail-harmony-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #E8758A;
+}
+
+.detail-harmony-num .label {
+  font-size: 22rpx;
+  color: #8A6B72;
+  font-weight: 500;
+  margin-right: 8rpx;
+}
+
+.detail-ai {
+  display: block;
+  font-size: 25rpx;
+  color: #2D1B2E;
+  line-height: 1.6;
+  margin-bottom: 10rpx;
+}
+
+.detail-ai .ico {
+  margin-right: 6rpx;
+}
+
+.detail-point {
+  display: block;
+  font-size: 24rpx;
+  color: #6B4A52;
+  line-height: 1.6;
+  margin-bottom: 6rpx;
+}
+
+.detail-streak {
+  display: block;
+  font-size: 22rpx;
+  color: #8A6B72;
+  margin-top: 12rpx;
+}
+
+.detail-streak .alive {
+  color: #4A8A5C;
+  font-weight: 500;
+}
+
+.detail-streak .dead {
+  color: #C24A5E;
+  font-weight: 500;
+}
+
+.detail-break {
+  background: #FFF0EE;
+  border-radius: 14rpx;
+  padding: 20rpx;
+  margin-bottom: 12rpx;
+}
+
+.detail-break .reason {
+  display: block;
+  font-size: 24rpx;
+  color: #C24A5E;
+  line-height: 1.6;
+  margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+/* 页脚 */
+.sim-footer {
+  text-align: center;
+  font-size: 22rpx;
+  color: #B89A9F;
+  margin-top: 32rpx;
+  line-height: 1.7;
+}

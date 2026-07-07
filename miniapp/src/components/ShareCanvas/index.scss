@@ -13,7 +13,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(45, 27, 46, 0.8);
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -46,8 +46,10 @@
 }
 
 .share-canvas-el {
-  background: #ffffff;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
+  background: #FFF8F5;
+  box-shadow: 0 8rpx 32rpx rgba(232, 117, 138, 0.08);
+  /* Canvas 尺寸由 style 属性控制（px 单位，与绘制坐标一致） */
+  border-radius: 16rpx;
 }
 
 .share-canvas-actions {
@@ -58,8 +60,8 @@
   align-items: center;
 
   .btn-primary {
-    background: #DEDBC8;
-    color: #000000;
+    background: #E8758A;
+    color: #FFFFFF;
     border-radius: 48rpx;
     height: 88rpx;
     line-height: 88rpx;

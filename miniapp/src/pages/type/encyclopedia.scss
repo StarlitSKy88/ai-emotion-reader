@@ -13,7 +13,7 @@
   display: block;
   font-size: 36rpx;
   font-weight: 700;
-  color: #DEDBC8;
+  color: #E8758A;
   margin-bottom: 12rpx;
 }
 
@@ -35,9 +35,9 @@
   height: 72rpx;
   padding: 0 24rpx;
   font-size: 26rpx;
-  color: #E1E0CC;
-  background: #101010;
-  border: 1rpx solid #212121;
+  color: #2D1B2E;
+  background: #FFFFFF;
+  border: 1rpx solid #F0E0E5;
   border-radius: 999rpx;
   box-sizing: border-box;
 }
@@ -51,15 +51,15 @@
   display: block;
   font-size: 28rpx;
   font-weight: 600;
-  color: #737373;
+  color: #8B7B80;
   margin-bottom: 16rpx;
   padding-left: 8rpx;
 }
 
 /* 类型卡 */
 .type-card {
-  background: #101010;
-  border: 1rpx solid #212121;
+  background: #FFFFFF;
+  border: 1rpx solid #F0E0E5;
   border-radius: 16rpx;
   padding: 24rpx;
   margin-bottom: 16rpx;
@@ -71,8 +71,8 @@
 }
 
 .type-card.rare {
-  border-color: #FFD700;
-  background: #101010;
+  border-color: #C9A961;
+  background: #FFFFFF;
 }
 
 .card-header {
@@ -97,7 +97,7 @@
   display: block;
   font-size: 30rpx;
   font-weight: 600;
-  color: #E1E0CC;
+  color: #2D1B2E;
   margin-bottom: 4rpx;
 }
 
@@ -116,9 +116,9 @@
 .rarity-badge {
   flex-shrink: 0;
   font-size: 20rpx;
-  color: #FFD700;
-  background: #212121;
-  border: 1rpx solid #FFD700;
+  color: #C9A961;
+  background: #F0E0E5;
+  border: 1rpx solid #C9A961;
   padding: 4rpx 12rpx;
   border-radius: 999rpx;
 }
@@ -134,5 +134,5 @@
   margin-top: 32rpx;
   text-align: center;
   font-size: 24rpx;
-  color: #737373;
+  color: #8B7B80;
 }

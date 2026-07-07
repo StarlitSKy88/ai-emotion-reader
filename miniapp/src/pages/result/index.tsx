@@ -453,7 +453,7 @@ export default function ResultPage() {
           </View>
           <View className='couple-link'>
             <View className='couple-line' />
-            <Icon name='dot' size={16} color='#DEDBC8' />
+            <Icon name='dot' size={16} color='#E8758A' />
             <View className='couple-line' />
           </View>
           <View className='couple-side'>
@@ -477,7 +477,7 @@ export default function ResultPage() {
               <TypeVisual code={data.matched.code} radarProfile={data.matched.radarProfile! as { D1: number; D2: number; D3: number; D4: number; D5: number; D6: number }} rarity={data.matched.rarity} size={320} />
             </View>
           ) : (
-            <Icon name='lock' size={64} color='#DEDBC8' />
+            <Icon name='lock' size={64} color='#E8758A' />
           )}
           <Text className='type-name'>{showBasic ? data.matched.name : '???'}</Text>
           <Text className='type-rarity'>
@@ -574,7 +574,7 @@ export default function ResultPage() {
               <Text className='multi-dim-label'>行动建议</Text>
               {data.multiDimAnalysis.suggestions.map((s, i) => (
                 <View key={i} className='suggestion-item'>
-                  <Icon name='dot' size={12} color='#DEDBC8' />
+                  <Icon name='dot' size={12} color='#E8758A' />
                   <Text className='suggestion-text'>{s}</Text>
                 </View>
               ))}

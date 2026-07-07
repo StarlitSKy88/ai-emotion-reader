@@ -338,9 +338,9 @@ export interface FallbackTask {
 const FALLBACK_TASKS: Record<Dimension, FallbackTask[]> = {
   D1: [
     {
-      title: '写下你今天最强烈的一个情绪',
+      title: '一起完成一次3分钟眼神对话',
       description:
-        '花 3 分钟，写下你今天体验到的最强烈的一个情绪，以及触发它的事件。不需要发给对方，只是先看见自己。',
+        '面对面坐下，不看手机不说话，只看对方的眼睛3分钟。结束后各说一句刚才的感受。这是最简单的"在一起"。',
       difficulty: 'easy',
       sourceDimension: 'D1',
       targetDimension: 'D1',
@@ -348,9 +348,19 @@ const FALLBACK_TASKS: Record<Dimension, FallbackTask[]> = {
       category: 'self-awareness',
     },
     {
-      title: '告诉对方一个你最近的「小不安」',
+      title: '一起听一首对你们有特殊意义的歌',
       description:
-        '挑一个不严重但真实存在的小不安（比如「最近总担心工作出错」），用一句话告诉对方。不需要对方解决，只是分享。',
+        '找一首你们都喜欢的歌，戴上耳机或外放，一起完整听完。结束后各自写下一句听歌时想到的画面。',
+      difficulty: 'easy',
+      sourceDimension: 'D1',
+      targetDimension: 'D1',
+      estimatedMin: 5,
+      category: 'emotion',
+    },
+    {
+      title: '一起给对方写一张"今天我注意到你"小纸条',
+      description:
+        '花3分钟，各自写下一句今天注意到对方的细节（"你今天笑起来有点累"）。写完交换看，不解释，只接住。',
       difficulty: 'medium',
       sourceDimension: 'D1',
       targetDimension: 'D1',
@@ -358,20 +368,9 @@ const FALLBACK_TASKS: Record<Dimension, FallbackTask[]> = {
       category: 'emotion',
     },
     {
-      title: '回忆一个让你觉得被爱的瞬间',
+      title: '一起完成15分钟同步呼吸练习',
       description:
-        '闭上眼回忆一个对方让你觉得被爱的具体瞬间（某句话、某个动作）。把它写下来，然后告诉对方「那天你那样做，我记得」。',
-      difficulty: 'easy',
-      sourceDimension: 'D1',
-      targetDimension: 'D1',
-      estimatedMin: 3,
-      category: 'emotion',
-    },
-    // V2 优化（W-4）：原 fallback 库缺 hard 难度，补充 hard 难度任务
-    {
-      title: '写一封「内在小孩」的信并分享给对方',
-      description:
-        '花 15 分钟写一封信给自己的「内在小孩」（童年那个感到不安的部分），告诉 TA 你现在如何理解 TA 的不安。写完挑一段你愿意的部分念给对方听，让 TA 看见你的脆弱。',
+        '背靠背坐下，闭上眼，一起呼吸15分钟。感受对方的呼吸节奏，试着同步。结束后不说话，各自写一句感受。',
       difficulty: 'hard',
       sourceDimension: 'D1',
       targetDimension: 'D1',
@@ -381,62 +380,61 @@ const FALLBACK_TASKS: Record<Dimension, FallbackTask[]> = {
   ],
   D2: [
     {
-      title: '用「我感到…因为…」造一句话',
+      title: '一起玩"3真1假"游戏',
       description:
-        '挑今天的一件小事，用「我感到___，因为___」的句式告诉对方。避免「你总是」「你从不」这类指责性开头。',
+        '各说4件关于自己的事（3件真的1件假的），对方猜哪件是假的。猜完后一起聊聊那些"真"的事。',
       difficulty: 'easy',
-      sourceDimension: 'D2',
-      targetDimension: 'D2',
-      estimatedMin: 3,
-      category: 'communication',
-    },
-    {
-      title: '听完对方说话再回应',
-      description:
-        '今天和对方有一次对话时，练习「先完整听完对方说完，停顿 3 秒，再回应」。不插嘴、不预判、不急着给建议。',
-      difficulty: 'medium',
       sourceDimension: 'D2',
       targetDimension: 'D2',
       estimatedMin: 5,
       category: 'communication',
     },
     {
-      title: '问对方一个开放问题',
+      title: '一起给对方讲今天最有意思的事',
       description:
-        '问对方一个没有标准答案的问题，比如「今天有什么让你意外的事吗？」然后认真听完答案。',
-      difficulty: 'easy',
+        '各自花3分钟，给对方讲今天自己遇到的最有意思的一件事。对方只能听，不能评论，不能打断，听完只说"谢谢你告诉我"。',
+      difficulty: 'medium',
       sourceDimension: 'D2',
       targetDimension: 'D2',
-      estimatedMin: 3,
+      estimatedMin: 6,
       category: 'communication',
     },
-    // V2 优化（W-4）：原 fallback 库缺 hard 难度，补充 hard 难度任务
     {
-      title: '用「非暴力沟通」四步法聊一件近期的小摩擦',
+      title: '一起完成一次"无声晚餐"',
       description:
-        '挑近期一次小摩擦，用「观察 → 感受 → 需要 → 请求」四步完整写下来给对方看。例：「周二你没回我消息（观察），我感到有点失落（感受），因为我需要被放在心上（需要），下次能否在忙之前告诉我一声（请求）」。双方都做完后交换看。',
+        '一起吃一顿饭，全程不说话，只用眼神和手势交流。观察对方，感受对方，把注意力还给"在一起"本身。',
+      difficulty: 'medium',
+      sourceDimension: 'D2',
+      targetDimension: 'D2',
+      estimatedMin: 15,
+      category: 'communication',
+    },
+    {
+      title: '一起完成一次"角色互换对话"',
+      description:
+        '花10分钟，A扮演B，B扮演A，聊一件最近的小事。试着用对方的语气、对方的立场说话。结束后聊聊"原来你是这么想的"。',
       difficulty: 'hard',
       sourceDimension: 'D2',
       targetDimension: 'D2',
-      estimatedMin: 20,
+      estimatedMin: 10,
       category: 'communication',
     },
   ],
   D3: [
     {
-      title: '识别你们最近一次小摩擦的「引爆点」',
+      title: '一起做一次"和好仪式"',
       description:
-        '回想最近一次小摩擦，写下来：触发事件是什么？你当时的情绪是什么？对方可能是什么情绪？不评价对错，只是看见。',
-      difficulty: 'medium',
+        '为最近的一次小摩擦，双方各写一句"我做得不够好的地方"。写完一起把纸条撕掉，说一句"翻篇了"。',
+      difficulty: 'easy',
       sourceDimension: 'D3',
       targetDimension: 'D3',
       estimatedMin: 5,
-      category: 'communication',
+      category: 'relationship',
     },
     {
-      title: '主动说一句「刚才我也有点急」',
+      title: '一起完成"情绪温度计"',
       description:
-        '如果今天有小摩擦，主动说一句「刚才我也有点急，不是针对你」。如果今天没有，回忆上次摩擦时自己可以补充这句的话。',
+        '各自给今天的情绪打分（0-10分），写在纸上一起看。如果分差大，低分的一方说一句需要什么；如果分差小，互相击掌。',
       difficulty: 'easy',
       sourceDimension: 'D3',
       targetDimension: 'D3',
@@ -444,32 +442,31 @@ const FALLBACK_TASKS: Record<Dimension, FallbackTask[]> = {
       category: 'communication',
     },
     {
-      title: '约定一个「暂停手势」',
+      title: '一起完成"拥抱和解"',
       description:
-        '和对方约定一个手势（比如比 ✋），表示「我现在情绪有点上头，需要 10 分钟冷静」。双方都同意后用这个手势代替争吵。',
+        '为最近的一次小摩擦，给对方一个长拥抱（至少30秒），抱的时候说一句"我们和好了"。不解释，不翻旧账，只拥抱。',
       difficulty: 'medium',
       sourceDimension: 'D3',
       targetDimension: 'D3',
-      estimatedMin: 5,
+      estimatedMin: 1,
       category: 'relationship',
     },
-    // V2 优化（W-4）：原 fallback 库缺 hard 难度，补充 hard 难度任务
     {
-      title: '复盘一次近期冲突并各自承担一部分责任',
+      title: '一起写一张"我们的停战协议"',
       description:
-        '挑近期一次较明显的冲突，各自独处 10 分钟写下：①我当时的情绪 ②我哪个举动可能激化了对方 ③如果重来一次我可以怎么改。写完后双方交换看，并各自说一句「这部分是我可以承担的」。',
+        '一起写下一句话："下次再有摩擦，我们先做____再说话"（比如先喝口水、先深呼吸3次）。双方共同签字，贴在冰箱上。',
       difficulty: 'hard',
       sourceDimension: 'D3',
       targetDimension: 'D3',
-      estimatedMin: 25,
-      category: 'communication',
+      estimatedMin: 10,
+      category: 'relationship',
     },
   ],
   D4: [
     {
-      title: '一起回忆你们关系的起点',
+      title: '一起回忆你们第一次见面的场景',
       description:
-        '和对方一起回忆你们第一次见面的场景。各自写下一句话：当时对方给你留下的第一印象是什么？',
+        '坐在一起，轮流讲你们第一次见面时记得的细节。讲完后各自写下一句话："当时没想到你会..."。一起看对方写的。',
       difficulty: 'easy',
       sourceDimension: 'D4',
       targetDimension: 'D4',
@@ -477,85 +474,83 @@ const FALLBACK_TASKS: Record<Dimension, FallbackTask[]> = {
       category: 'meaning',
     },
     {
-      title: '讨论一个共同的「小传统」',
+      title: '一起画一张"我们的关系地图"',
       description:
-        '和对方讨论一个你们已经有的小习惯（比如每周日一起看一集剧），或者约定一个新的小传统。把它写下来。',
+        '拿一张纸，一起标出你们去过的地方、想一起去的地方。各自用不同颜色的笔画，最后一起给地图起个名字。',
       difficulty: 'medium',
       sourceDimension: 'D4',
       targetDimension: 'D4',
-      estimatedMin: 7,
+      estimatedMin: 15,
       category: 'meaning',
     },
     {
-      title: '写下你们关系的「三个关键词」',
+      title: '一起看一部电影',
       description:
-        '各自写下三个形容你们关系的关键词，然后交换看。如果不同，聊聊为什么。',
+        '选一部你们都想看（或重温）的电影，一起完整看完。结束后各自写一句观后感，交换看。重点是"一起看完"，不快进不分心。',
       difficulty: 'medium',
       sourceDimension: 'D4',
       targetDimension: 'D4',
-      estimatedMin: 5,
+      estimatedMin: 90,
       category: 'meaning',
     },
-    // V2 优化（W-4）：原 fallback 库缺 hard 难度，补充 hard 难度任务
     {
-      title: '共同写一份「关系愿景清单」',
+      title: '一起完成"关系时间胶囊"',
       description:
-        '和对方一起花 30 分钟，写一份未来一年的「关系愿景清单」：你们想一起完成的三件事、想成为怎样的一对、各自愿意为关系投入的一种小改变。写完各自保留一份，半年后拿出来看。',
+        '各自写一封给一年后对方的信，封进信封，约定明年今日一起拆开。写的时候不放音乐不分心，只写给彼此的话。',
       difficulty: 'hard',
       sourceDimension: 'D4',
       targetDimension: 'D4',
-      estimatedMin: 30,
+      estimatedMin: 20,
       category: 'meaning',
     },
   ],
   D5: [
     {
-      title: '主动告诉对方一件「我相信你」的事',
+      title: '一起完成一次"盲导信任走"',
       description:
-        '主动告诉对方一件你相信 TA 能做好的事，比如「我相信你能搞定那个项目」。具体到事，不要泛泛而谈。',
+        '一人闭眼，另一人引导走一段路（5分钟）。引导方只用手势和简短语言，确保对方安全。走完交换角色。',
       difficulty: 'easy',
-      sourceDimension: 'D5',
-      targetDimension: 'D5',
-      estimatedMin: 3,
-      category: 'relationship',
-    },
-    {
-      title: '承诺一件本周会做的小事，并做到',
-      description:
-        '向对方承诺一件本周内会做的小事（比如「周三晚上洗碗」），设个提醒，按时完成。信任来自小事的累积。',
-      difficulty: 'medium',
       sourceDimension: 'D5',
       targetDimension: 'D5',
       estimatedMin: 5,
       category: 'relationship',
     },
     {
-      title: '聊聊你最近对关系的一个「小担心」',
+      title: '一起做一件对方一直想让你做的小事',
       description:
-        '用一个温和的方式，告诉对方你最近对关系的一个小担心（不是大问题，只是想说说）。比如「最近我们好像都挺忙的」。',
+        'A陪B做一件B一直想让A做的事（看一集剧、吃一家店），B也陪A做一件A想做的事。一起完成，不分心。',
+      difficulty: 'easy',
+      sourceDimension: 'D5',
+      targetDimension: 'D5',
+      estimatedMin: 10,
+      category: 'relationship',
+    },
+    {
+      title: '一起制定"本月承诺清单"',
+      description:
+        '一起各写2件本月会为对方做的事（"周三晚上我洗碗"、"周末陪你逛街"）。写完一起念一遍，贴在冰箱上。',
       difficulty: 'medium',
       sourceDimension: 'D5',
       targetDimension: 'D5',
-      estimatedMin: 7,
+      estimatedMin: 10,
       category: 'relationship',
     },
-    // V2 优化（W-4）：原 fallback 库缺 hard 难度，补充 hard 难度任务
     {
-      title: '共同做一份「信任重建」清单并各自承诺一项行动',
+      title: '一起做一件对方擅长而你不会的事',
       description:
-        '和对方各自写下：①最近一件让你们信任感动摇的小事 ②你希望对方在这件事上能做的一点改变 ③你自己也愿意为重建信任做的一件事。交换看后，各自挑一项本周内会做的行动告诉对方。',
+        '让擅长的一方教不擅长的一方做一件事（做饭、画画、运动）。一起完成，不评价对方学得怎么样，只说"谢谢你教我"。',
       difficulty: 'hard',
       sourceDimension: 'D5',
       targetDimension: 'D5',
-      estimatedMin: 25,
+      estimatedMin: 20,
       category: 'relationship',
     },
   ],
   D6: [
     {
-      title: '主动给对方一个 20 秒的拥抱',
+      title: '一起给对方一个20秒拥抱',
       description:
-        '今天主动给对方一个长一点的拥抱（至少 20 秒），不发一言，只是抱。长拥抱会释放催产素，比短拥抱更拉近关系。',
+        '今天主动给对方一个长拥抱（至少20秒），不发一言，只是抱。长拥抱会释放催产素，比短拥抱更拉近关系。',
       difficulty: 'easy',
       sourceDimension: 'D6',
       targetDimension: 'D6',
@@ -563,30 +558,29 @@ const FALLBACK_TASKS: Record<Dimension, FallbackTask[]> = {
       category: 'intimacy',
     },
     {
-      title: '一起做一件「无用但有趣」的小事',
+      title: '一起跳一支舞',
       description:
-        '和对方一起做一件没有目的的小事，比如一起看 5 分钟云、一起拼一个奇怪的图、一起回忆一部老片。重点是「一起」而不是「做什么」。',
-      difficulty: 'medium',
-      sourceDimension: 'D6',
-      targetDimension: 'D6',
-      estimatedMin: 10,
-      category: 'intimacy',
-    },
-    {
-      title: '告诉对方一个 TA 让你心动的瞬间',
-      description:
-        '告诉对方一个最近让 TA 你心动的具体瞬间（某个表情、某句话、某个动作）。具体到细节。',
+        '在客厅放一首你们喜欢的歌，一起跳一支舞。不会跳没关系，抱着晃就行。重点是"一起动起来"。',
       difficulty: 'easy',
       sourceDimension: 'D6',
       targetDimension: 'D6',
-      estimatedMin: 3,
+      estimatedMin: 5,
       category: 'intimacy',
     },
-    // V2 优化（W-4）：原 fallback 库缺 hard 难度，补充 hard 难度任务
     {
-      title: '一起完成一次「无手机 90 分钟」深度共处',
+      title: '一起完成"心动留言"',
       description:
-        '约一次 90 分钟的「无手机时段」：双方把手机调飞行模式放另一个房间。一起做一件需要专注共同完成的事（做饭、散步、拼图、长聊近况），期间不刷手机、不回消息。结束后各自写下一句「这 90 分钟里我最享受的瞬间」。',
+        '各自在对方手机备忘录留一句"今天我最心动你的瞬间"。留完一起看对方写的，再说一句"原来你是这么想的"。',
+      difficulty: 'medium',
+      sourceDimension: 'D6',
+      targetDimension: 'D6',
+      estimatedMin: 5,
+      category: 'intimacy',
+    },
+    {
+      title: '一起完成一次"无手机90分钟"深度共处',
+      description:
+        '双方把手机调飞行模式放另一个房间。一起做一件需要专注共同完成的事（拼图、做饭、散步），结束后各自写下一句最享受的瞬间。',
       difficulty: 'hard',
       sourceDimension: 'D6',
       targetDimension: 'D6',

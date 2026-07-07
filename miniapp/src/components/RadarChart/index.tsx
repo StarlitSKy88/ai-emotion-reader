@@ -2,7 +2,7 @@
  * 雷达图组件（6 维度）
  * - 纯 SVG 生成（小程序不支持内联 SVG 元素，改为生成 SVG 字符串经 data URI 由 Image 渲染）
  * - 支持单方分数和双方分数对比
- * - A 用 warm cream #DEDBC8,B 用暗化 warm cream #7A7660(同色系不同明度)
+ * - A 用 warm rose #E8758A,B 用暗化 warm rose #9D2B4B(同色系不同明度)
  *
  * 注意：微信小程序 Image 组件对 URL-encoded SVG（data:image/svg+xml,…）支持不稳定，
  * 真机可能不渲染；这里统一改用 base64 编码（data:image/svg+xml;base64,…）。
@@ -49,8 +49,8 @@ const DEFAULT_LABELS: Record<string, string> = {
 };
 
 const DIMENSIONS = ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'] as const;
-const COLOR_A = '#DEDBC8';
-const COLOR_B = '#7A7660';
+const COLOR_A = '#E8758A';
+const COLOR_B = '#9D2B4B';
 
 export default function RadarChart({
   scoresA,

@@ -240,13 +240,13 @@ export default function Index() {
           <View className='task-card-status'>
             <View className={`status-item ${todayTask.myStatus === 'done' ? 'done' : ''}`}>
               <Text>我</Text>
-              <Icon name={todayTask.myStatus === 'done' ? 'check' : 'circle'} size={28} color={todayTask.myStatus === 'done' ? '#DEDBC8' : '#737373'} />
+              <Icon name={todayTask.myStatus === 'done' ? 'check' : 'circle'} size={28} color={todayTask.myStatus === 'done' ? '#E8758A' : '#8B7B80'} />
             </View>
             <View className={`status-item ${todayTask.partnerStatus === 'done' ? 'done' : ''}`}>
               <Text>TA</Text>
-              <Icon name={todayTask.partnerStatus === 'done' ? 'check' : 'circle'} size={28} color={todayTask.partnerStatus === 'done' ? '#DEDBC8' : '#737373'} />
+              <Icon name={todayTask.partnerStatus === 'done' ? 'check' : 'circle'} size={28} color={todayTask.partnerStatus === 'done' ? '#E8758A' : '#8B7B80'} />
             </View>
-            <Text className='card-link'>去做 <Icon name='arrow-right' size={24} color='#DEDBC8' /></Text>
+            <Text className='card-link'>去做 <Icon name='arrow-right' size={24} color='#E8758A' /></Text>
           </View>
         </View>
       )}
@@ -258,7 +258,7 @@ export default function Index() {
         <Text className='card-desc text-muted'>
           烟火余生型 · 双子星型 · 灯塔与舟型 · ...
         </Text>
-        <Text className='card-link'>查看类型百科 <Icon name='arrow-right' size={24} color='#DEDBC8' /></Text>
+        <Text className='card-link'>查看类型百科 <Icon name='arrow-right' size={24} color='#E8758A' /></Text>
       </View>
 
       <View className='footer'>

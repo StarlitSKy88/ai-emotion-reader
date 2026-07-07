@@ -1,48 +1,55 @@
 /**
  * 全局样式
- * 设计风格：V3 深色电影感，black 背景 + cream 强调
+ * 设计风格：暖阳玫瑰，warm rose 背景 + cream 强调
+ * 从 V3 深色电影感升级为恋爱温暖氛围
  */
 
 page {
-  background: #000000;
-  color: #E1E0CC;
+  background: #FFF8F5;
+  color: #2D1B2E;
   font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
   font-size: 28rpx;
   line-height: 1.6;
 }
 
-/* 主题色：warm cream（V3 强调色） */
-$primary: #DEDBC8;
-$primary-light: #212121;
-$ink: #E1E0CC;
-$paper: #000000;
-$border: #212121;
-$muted: #737373;
+/* 主题色：暖阳玫瑰系 */
+$primary: #E8758A;
+$primary-dark: #9D2B4B;
+$primary-light: #F4DDE2;
+$cream: #FFF8F5;
+$paper: #FFFFFF;
+$ink: #2D1B2E;
+$border: #F0E0E5;
+$muted: #8B7B80;
+$gold: #C9A961;
 
 /* 通用工具类 */
 .text-primary { color: $primary; }
 .text-muted { color: $muted; }
 .bg-paper { background: $paper; }
+.bg-cream { background: $cream; }
 
 /* 卡片基础 */
 .card {
-  background: #101010;
+  background: #FFFFFF;
   border: 1rpx solid $border;
-  border-radius: 16rpx;
+  border-radius: 24rpx;
   padding: 32rpx;
   margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(232, 117, 138, 0.06);
 }
 
 /* 按钮 */
 .btn-primary {
   background: $primary;
-  color: #000000;
+  color: #FFFFFF;
   border-radius: 999rpx;
   height: 88rpx;
   line-height: 88rpx;
   text-align: center;
   font-size: 30rpx;
-  font-weight: 500;
+  font-weight: 600;
+  box-shadow: 0 4rpx 16rpx rgba(232, 117, 138, 0.3);
 }
 
 .btn-ghost {
@@ -54,4 +61,20 @@ $muted: #737373;
   line-height: 88rpx;
   text-align: center;
   font-size: 30rpx;
+  font-weight: 500;
+}
+
+/* 标签 */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  background: $primary-light;
+  color: $primary-dark;
+}
+
+.tag-gold {
+  background: rgba(201, 169, 97, 0.15);
+  color: $gold;
 }

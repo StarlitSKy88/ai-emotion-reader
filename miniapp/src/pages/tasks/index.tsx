@@ -31,10 +31,13 @@ interface TodayResponse {
   progress: ChallengeProgress;
 }
 
+type EmptyReason = 'loading' | 'notLoggedIn' | 'notPaired' | 'apiError' | null;
+
 export default function TasksPage() {
   const [task, setTask] = useState<DailyTaskInfo | null>(null);
   const [progress, setProgress] = useState<ChallengeProgress | null>(null);
   const [loading, setLoading] = useState(true);
+  const [emptyReason, setEmptyReason] = useState<EmptyReason>(null);
 
   useDidShow(() => {
     trackPageView('pages/tasks/index');
@@ -42,31 +45,48 @@ export default function TasksPage() {
   });
 
   const loadTask = async () => {
+    setLoading(true);
     if (!isLoggedIn()) {
       setTask(null);
       setProgress(null);
+      setEmptyReason('notPaired');
       setLoading(false);
       return;
     }
     try {
       const res = await http.get<TodayResponse>('/api/task/today');
-      setTask(res?.task ?? null);
-      setProgress(res?.progress ?? null);
+      if (res?.task) {
+        setTask(res.task);
+        setProgress(res.progress ?? null);
+        setEmptyReason(null);
 
-      // 兜底:若 today 没返回 progress,且 task 有 coupleId,补拉 progress 接口
-      if (!res?.progress && res?.task?.coupleId) {
-        try {
-          const prog = await http.get<ChallengeProgress>(
-            `/api/task/progress?coupleId=${res.task.coupleId}`,
-          );
-          setProgress(prog);
-        } catch {
-          // 静默:progress 拉取失败不阻塞任务展示
+        // 兜底:若 today 没返回 progress,且 task 有 coupleId,补拉 progress 接口
+        if (!res.progress && res.task.coupleId) {
+          try {
+            const prog = await http.get<ChallengeProgress>(
+              `/api/task/progress?coupleId=${res.task.coupleId}`,
+            );
+            setProgress(prog);
+          } catch {
+            // 静默:progress 拉取失败不阻塞任务展示
+          }
         }
+      } else {
+        // 已登录但无任务 = 未完成测试或未配对
+        setTask(null);
+        setProgress(null);
+        setEmptyReason('notPaired');
       }
-    } catch {
+    } catch (err) {
       setTask(null);
       setProgress(null);
+      // 401 已被 request 拦截器处理(跳 profile),这里处理其他错误
+      const msg = (err as Error)?.message || '';
+      if (msg.includes('404') || msg.includes('Not Found')) {
+        setEmptyReason('notPaired');
+      } else {
+        setEmptyReason('apiError');
+      }
     } finally {
       setLoading(false);
     }
@@ -92,18 +112,37 @@ export default function TasksPage() {
     );
   }
 
-  /* 未配对 / 未生成任务场景 */
+  /* 未配对 / 未生成任务场景 - 区分原因 */
   if (!task) {
+    const isNotPaired = emptyReason === 'notPaired';
+    const isApiError = emptyReason === 'apiError';
+
     return (
       <View className='tasks empty'>
         <View className='card'>
-          <Text className='card-title'>还没有每日任务</Text>
-          <Text className='card-desc text-muted'>
-            先完成情侣匹配测试,解锁结果后,每日会基于你们的关系类型推送一个 3 分钟微行动
-          </Text>
-          <Button className='btn-primary' onClick={goToTest}>
-            去做测试
-          </Button>
+          {isApiError ? (
+            <>
+              <Text className='card-title'>加载失败</Text>
+              <Text className='card-desc text-muted'>
+                网络异常,请稍后重试
+              </Text>
+              <Button className='btn-ghost' onClick={loadTask}>
+                重新加载
+              </Button>
+            </>
+          ) : (
+            <>
+              <Text className='card-title'>还没有每日任务</Text>
+              <Text className='card-desc text-muted'>
+                {isNotPaired
+                  ? '完成情侣测试并配对后,每日会基于你们的关系类型推送一个 3 分钟微行动'
+                  : '先完成情侣匹配测试,解锁结果后,每日会基于你们的关系类型推送一个 3 分钟微行动'}
+              </Text>
+              <Button className='btn-primary' onClick={goToTest}>
+                {isNotPaired ? '去配对' : '去做测试'}
+              </Button>
+            </>
+          )}
         </View>
       </View>
     );
@@ -160,7 +199,7 @@ export default function TasksPage() {
           <View className='summary-divider' />
           <View className='summary-item'>
             {bothDone ? (
-              <Icon name='check' size={48} color='#DEDBC8' />
+              <Icon name='check' size={48} color='#E8758A' />
             ) : (
               <Text className='summary-num'>{task.estimatedMin}'</Text>
             )}
@@ -187,11 +226,11 @@ export default function TasksPage() {
             >
               <Text>我:</Text>
               {task.myStatus === 'done' ? (
-                <Icon name='check' size={28} color='#DEDBC8' />
+                <Icon name='check' size={28} color='#E8758A' />
               ) : task.myStatus === 'skipped' ? (
                 <Text>—</Text>
               ) : (
-                <Icon name='circle' size={28} color='#737373' />
+                <Icon name='circle' size={28} color='#8B7B80' />
               )}
             </View>
             <View
@@ -200,17 +239,17 @@ export default function TasksPage() {
             >
               <Text>TA:</Text>
               {task.partnerStatus === 'done' ? (
-                <Icon name='check' size={28} color='#DEDBC8' />
+                <Icon name='check' size={28} color='#E8758A' />
               ) : task.partnerStatus === 'skipped' ? (
                 <Text>—</Text>
               ) : (
-                <Icon name='circle' size={28} color='#737373' />
+                <Icon name='circle' size={28} color='#8B7B80' />
               )}
             </View>
           </View>
           <View className='task-link text-primary' style={{ display: 'inline-flex', alignItems: 'center', gap: '4rpx' }}>
             <Text>查看详情</Text>
-            <Icon name='arrow-right' size={24} color='#DEDBC8' />
+            <Icon name='arrow-right' size={24} color='#E8758A' />
           </View>
         </View>
 
@@ -220,7 +259,7 @@ export default function TasksPage() {
             <Text className='insight-title'>今日默契度已就绪</Text>
             <View className='insight-text' style={{ display: 'flex', alignItems: 'center', gap: '4rpx' }}>
               <Text>点详情查看共鸣点与互补点</Text>
-              <Icon name='arrow-right' size={24} color='#DEDBC8' />
+              <Icon name='arrow-right' size={24} color='#E8758A' />
             </View>
           </View>
         )}

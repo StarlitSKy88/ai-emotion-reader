@@ -2,7 +2,7 @@
  * Icon 组件 — 轻量 SVG 图标库（lucide 风格）
  *
  * 设计:
- * - line icons,stroke 1.5-2,warm cream #DEDBC8 色调
+ * - line icons,stroke 1.5-2,warm rose #E8758A 色调
  * - 因为微信小程序不支持内联 SVG 元素,改为生成 SVG 字符串经 base64 data URI 由 Image 渲染
  * - 不使用 btoa:小程序环境无 btoa,且 btoa 不能直接处理 Unicode
  *
@@ -30,7 +30,7 @@ export interface IconProps {
   name: IconName;
   /** rpx,默认 48 */
   size?: number;
-  /** 默认 #DEDBC8 */
+  /** 默认 #E8758A */
   color?: string;
   /** 默认 2 */
   strokeWidth?: number;
@@ -56,7 +56,7 @@ const ICON_PATHS: Record<IconName, string> = {
     '<path d="M12 3l1.9 5.8a2 2 0 0 0 1.3 1.3L21 12l-5.8 1.9a2 2 0 0 0-1.3 1.3L12 21l-1.9-5.8a2 2 0 0 0-1.3-1.3L3 12l5.8-1.9a2 2 0 0 0 1.3-1.3L12 3z"/>',
 };
 
-const DEFAULT_COLOR = '#DEDBC8';
+const DEFAULT_COLOR = '#E8758A';
 
 /**
  * 把 SVG 字符串（含 Unicode）转为 base64

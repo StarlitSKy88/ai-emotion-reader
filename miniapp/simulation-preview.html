@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>30天情侣挑战模拟 - 问心 AI</title>
+<style>
+:root {
+  --primary: #E8758A;
+  --primary-dark: #9D2B4B;
+  --primary-light: #F4DDE2;
+  --cream: #FFF8F5;
+  --paper: #FFFFFF;
+  --ink: #2D1B2E;
+  --border: #F0E0E5;
+  --muted: #8B7B80;
+  --gold: #C9A961;
+  --green: #4CAF8A;
+  --red: #E85D6A;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  line-height: 1.6;
+  padding: 20px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+h1 { font-size: 24px; color: var(--primary-dark); margin-bottom: 4px; }
+.subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+/* 统计卡 */
+.stats-card {
+  background: var(--paper);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(232,117,138,0.08);
+}
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+.stats-item { text-align: center; }
+.stats-num { font-size: 32px; font-weight: 700; color: var(--primary); }
+.stats-num .unit { font-size: 13px; color: var(--muted); font-weight: 400; }
+.stats-label { font-size: 12px; color: var(--muted); display: block; margin-top: 4px; }
+.stats-divider { width: 1px; background: var(--border); }
+
+.progress-bar {
+  height: 8px;
+  background: var(--primary-light);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+  border-radius: 4px;
+}
+.progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.breakpoints { color: var(--gold); }
+
+/* 类型卡 */
+.type-card {
+  background: var(--paper);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border-left: 4px solid var(--primary);
+  box-shadow: 0 2px 12px rgba(232,117,138,0.08);
+}
+.type-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 8px; }
+.type-name { font-size: 22px; font-weight: 700; color: var(--primary-dark); }
+.type-code { font-size: 12px; color: var(--muted); font-family: monospace; }
+.type-line { font-size: 15px; color: var(--ink); font-style: italic; margin-bottom: 12px; }
+.type-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+/* section title */
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 24px 0 12px;
+  padding-left: 12px;
+  border-left: 3px solid var(--primary);
+}
+
+/* 时间轴 */
+.timeline { margin-bottom: 24px; }
+.day-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--paper);
+  border-radius: 12px;
+  margin-bottom: 6px;
+  border-left: 3px solid transparent;
+  transition: border-color 0.2s;
+}
+.day-row:hover { border-left-color: var(--primary-light); }
+.day-row.breakpoint {
+  border-left-color: var(--red);
+  background: #FFF0F2;
+}
+.day-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.day-row.breakpoint .day-badge {
+  background: #FFE0E5;
+  color: var(--red);
+}
+.day-main { flex: 1; min-width: 0; }
+.day-title { font-size: 14px; font-weight: 500; color: var(--ink); display: block; }
+.day-sub { display: flex; gap: 8px; margin-top: 2px; }
+.day-tag { font-size: 11px; color: var(--muted); }
+.day-tag.diff-easy { color: var(--green); }
+.day-tag.diff-medium { color: var(--primary); }
+.day-tag.diff-hard { color: var(--red); }
+.day-right { text-align: right; flex-shrink: 0; }
+.day-harmony { font-size: 20px; font-weight: 700; color: var(--primary); }
+.day-harmony.skipped { color: var(--muted); }
+.day-status { font-size: 10px; color: var(--muted); }
+.status-dot.done { color: var(--green); }
+.status-dot.skipped { color: var(--red); }
+
+/* 断点说明 */
+.breakpoint-card {
+  background: var(--paper);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 12px rgba(232,117,138,0.08);
+}
+.bp-intro { font-size: 14px; color: var(--muted); margin-bottom: 16px; line-height: 1.7; }
+.bp-item {
+  padding: 12px;
+  background: #FFF0F2;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.bp-head { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.bp-day { font-weight: 600; color: var(--ink); font-size: 13px; }
+.bp-skipper { font-size: 12px; color: var(--red); }
+.bp-reason { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+.bp-flow { font-size: 12px; color: var(--ink); display: block; margin-bottom: 2px; }
+.alive { color: var(--green); font-weight: 600; }
+.broken { color: var(--red); font-weight: 600; }
+
+/* 典型日期详情 */
+.detail-card {
+  background: var(--paper);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(232,117,138,0.08);
+}
+.detail-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.detail-day { font-size: 16px; font-weight: 700; color: var(--primary-dark); }
+.detail-date { font-size: 13px; color: var(--muted); }
+.detail-task-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.detail-task-desc { font-size: 13px; color: var(--muted); margin-bottom: 12px; line-height: 1.7; }
+.detail-meta { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.detail-status-row { display: flex; gap: 24px; font-size: 13px; margin-bottom: 12px; }
+.val-done { color: var(--green); font-weight: 600; }
+.val-skipped { color: var(--red); font-weight: 600; }
+.detail-break {
+  padding: 10px;
+  background: #FFF0F2;
+  border-radius: 8px;
+}
+.detail-break .reason { font-size: 13px; color: var(--red); display: block; margin-bottom: 4px; }
+.detail-harmony { margin-bottom: 8px; }
+.detail-harmony-num { font-size: 28px; font-weight: 700; color: var(--primary); }
+.detail-harmony-num .label { font-size: 13px; color: var(--muted); font-weight: 400; margin-right: 8px; }
+.detail-ai { font-size: 13px; color: var(--ink); display: block; margin-bottom: 6px; }
+.detail-point { font-size: 13px; color: var(--ink); display: block; margin-bottom: 4px; }
+.detail-streak { font-size: 12px; color: var(--muted); display: block; margin-top: 8px; }
+
+/* footer */
+.sim-footer {
+  text-align: center;
+  padding: 32px 20px;
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 2;
+}
+</style>
+</head>
+<body>
+<h1>30天情侣挑战模拟</h1>
+<p class="subtitle">烟火余生型（OLD_COUPLE）· 问心 AI</p>
+<div id="app"></div>
+<script>
+// ==================== 类型 ====================
+const DIM_LABEL = { D1:'依恋', D2:'沟通', D3:'冲突修复', D4:'共同意义', D5:'信任承诺', D6:'亲密激情' };
+const DIFF_LABEL = { easy:'简单', medium:'中等', hard:'挑战' };
+
+// ==================== 30个任务 ====================
+const TASKS = [
+  // ============ D1 依恋（5个）- 共同活动建立安全感 ============
+  { title:'一起完成一次3分钟眼神对话', desc:'面对面坐下，不看手机不说话，只看对方的眼睛3分钟。结束后各说一句刚才的感受。这是最简单的"在一起"。', dim:'D1', difficulty:'easy', estimatedMin:3 },
+  { title:'一起听一首对你们有特殊意义的歌', desc:'找一首你们都喜欢的歌，戴上耳机或外放，一起完整听完。结束后各自写下一句听歌时想到的画面。', dim:'D1', difficulty:'easy', estimatedMin:5 },
+  { title:'一起给对方写一张"今天我注意到你"小纸条', desc:'花3分钟，各自写下一句今天注意到对方的细节（"你今天笑起来有点累"）。写完交换看，不解释，只接住。', dim:'D1', difficulty:'medium', estimatedMin:5 },
+  { title:'一起翻看手机里的合照', desc:'一起翻相册里的合照，各自挑出最喜欢的一张，告诉对方为什么喜欢这张。重点是"一起翻"，不是"选哪张"。', dim:'D1', difficulty:'medium', estimatedMin:10 },
+  { title:'一起完成15分钟同步呼吸练习', desc:'背靠背坐下，闭上眼，一起呼吸15分钟。感受对方的呼吸节奏，试着同步。结束后不说话，各自写一句感受。', dim:'D1', difficulty:'hard', estimatedMin:15 },
+
+  // ============ D2 沟通（5个）- 共同活动练习表达 ============
+  { title:'一起玩"3真1假"游戏', desc:'各说4件关于自己的事（3件真的1件假的），对方猜哪件是假的。猜完后一起聊聊那些"真"的事。', dim:'D2', difficulty:'easy', estimatedMin:5 },
+  { title:'一起给对方讲今天最有意思的事', desc:'各自花3分钟，给对方讲今天自己遇到的最有意思的一件事。对方只能听，不能评论，不能打断，听完只说"谢谢你告诉我"。', dim:'D2', difficulty:'medium', estimatedMin:6 },
+  { title:'一起完成一次"无声晚餐"', desc:'一起吃一顿饭，全程不说话，只用眼神和手势交流。观察对方，感受对方，把注意力还给"在一起"本身。', dim:'D2', difficulty:'medium', estimatedMin:15 },
+  { title:'一起录制一段1分钟的"我们的播客"', desc:'打开手机录音，一起录一段1分钟的对话，主题是"今天我们各自的心情"。录完一起回放听一遍。', dim:'D2', difficulty:'medium', estimatedMin:5 },
+  { title:'一起完成一次"角色互换对话"', desc:'花10分钟，A扮演B，B扮演A，聊一件最近的小事。试着用对方的语气、对方的立场说话。结束后聊聊"原来你是这么想的"。', dim:'D2', difficulty:'hard', estimatedMin:10 },
+
+  // ============ D3 冲突修复（5个）- 共同活动修复关系 ============
+  { title:'一起做一次"和好仪式"', desc:'为最近的一次小摩擦，双方各写一句"我做得不够好的地方"。写完一起把纸条撕掉，说一句"翻篇了"。', dim:'D3', difficulty:'easy', estimatedMin:5 },
+  { title:'一起完成"情绪温度计"', desc:'各自给今天的情绪打分（0-10分），写在纸上一起看。如果分差大，低分的一方说一句需要什么；如果分差小，互相击掌。', dim:'D3', difficulty:'easy', estimatedMin:3 },
+  { title:'一起做一件让对方开心的小事', desc:'A给B倒杯水/泡杯茶，B给A捏肩1分钟。不需要说话，用行动说"我在乎你"。做完一起说一句"谢谢"。', dim:'D3', difficulty:'medium', estimatedMin:5 },
+  { title:'一起完成"拥抱和解"', desc:'为最近的一次小摩擦，给对方一个长拥抱（至少30秒），抱的时候说一句"我们和好了"。不解释，不翻旧账，只拥抱。', dim:'D3', difficulty:'medium', estimatedMin:1 },
+  { title:'一起写一张"我们的停战协议"', desc:'一起写下一句话："下次再有摩擦，我们先做____再说话"（比如先喝口水、先深呼吸3次）。双方共同签字，贴在冰箱上。', dim:'D3', difficulty:'hard', estimatedMin:10 },
+
+  // ============ D4 共同意义（5个）- 共同活动创造记忆 ============
+  { title:'一起回忆你们第一次见面的场景', desc:'坐在一起，轮流讲你们第一次见面时记得的细节。讲完后各自写下一句话："当时没想到你会..."。一起看对方写的。', dim:'D4', difficulty:'easy', estimatedMin:5 },
+  { title:'一起画一张"我们的关系地图"', desc:'拿一张纸，一起标出你们去过的地方、想一起去的地方。各自用不同颜色的笔画，最后一起给地图起个名字。', dim:'D4', difficulty:'medium', estimatedMin:15 },
+  { title:'一起看一部电影', desc:'选一部你们都想看（或重温）的电影，一起完整看完。结束后各自写一句观后感，交换看。重点是"一起看完"，不快进不分心。', dim:'D4', difficulty:'medium', estimatedMin:90 },
+  { title:'一起做一顿饭', desc:'一起做一顿饭，哪怕只是煮一碗面。分工合作：一个切菜一个炒，或一个煮一个摆盘。做完一起吃，拍照留念。', dim:'D4', difficulty:'hard', estimatedMin:30 },
+  { title:'一起完成"关系时间胶囊"', desc:'各自写一封给一年后对方的信，封进信封，约定明年今日一起拆开。写的时候不放音乐不分心，只写给彼此的话。', dim:'D4', difficulty:'hard', estimatedMin:20 },
+
+  // ============ D5 信任承诺（5个）- 共同活动建立信任 ============
+  { title:'一起完成一次"盲导信任走"', desc:'一人闭眼，另一人引导走一段路（5分钟）。引导方只用手势和简短语言，确保对方安全。走完交换角色。', dim:'D5', difficulty:'easy', estimatedMin:5 },
+  { title:'一起做一件对方一直想让你做的小事', desc:'A陪B做一件B一直想让A做的事（看一集剧、吃一家店），B也陪A做一件A想做的事。一起完成，不分心。', dim:'D5', difficulty:'easy', estimatedMin:10 },
+  { title:'一起制定"本月承诺清单"', desc:'一起各写2件本月会为对方做的事（"周三晚上我洗碗"、"周末陪你逛街"）。写完一起念一遍，贴在冰箱上。', dim:'D5', difficulty:'medium', estimatedMin:10 },
+  { title:'一起完成"信任背靠背"', desc:'背靠背坐下，闭上眼，感受对方的呼吸3分钟。结束后各自说一句"刚才我想到了..."。不评价，只分享。', dim:'D5', difficulty:'medium', estimatedMin:3 },
+  { title:'一起做一件对方擅长而你不会的事', desc:'让擅长的一方教不擅长的一方做一件事（做饭、画画、运动）。一起完成，不评价对方学得怎么样，只说"谢谢你教我"。', dim:'D5', difficulty:'hard', estimatedMin:20 },
+
+  // ============ D6 亲密激情（5个）- 共同活动点燃浪漫 ============
+  { title:'一起给对方一个20秒拥抱', desc:'今天主动给对方一个长拥抱（至少20秒），不发一言，只是抱。长拥抱会释放催产素，比短拥抱更拉近关系。', dim:'D6', difficulty:'easy', estimatedMin:1 },
+  { title:'一起跳一支舞', desc:'在客厅放一首你们喜欢的歌，一起跳一支舞。不会跳没关系，抱着晃就行。重点是"一起动起来"。', dim:'D6', difficulty:'easy', estimatedMin:5 },
+  { title:'一起完成"心动留言"', desc:'各自在对方手机备忘录留一句"今天我最心动你的瞬间"。留完一起看对方写的，再说一句"原来你是这么想的"。', dim:'D6', difficulty:'medium', estimatedMin:5 },
+  { title:'一起完成一次"无手机90分钟"深度共处', desc:'双方把手机调飞行模式放另一个房间。一起做一件需要专注共同完成的事（拼图、做饭、散步），结束后各自写下一句最享受的瞬间。', dim:'D6', difficulty:'hard', estimatedMin:90 },
+  { title:'一起看一次日落或日出', desc:'约一次一起看日落或日出，全程不说话只感受。结束后各自写一句话："刚才我想到的是..."。一起看对方写的。', dim:'D6', difficulty:'hard', estimatedMin:30 },
+];
+
+const AI_SUMMARY = {
+  D1:['今天的坦诚让你们离彼此又近了一寸','你们都敢把心里话摊在桌上，这很珍贵'],
+  D2:['好好说话，是你们最稳的默契','对话里多了倾听，少了评判'],
+  D3:['裂缝被你们亲手补上了光','都愿意先看见自己，再看见对方'],
+  D4:['你们的故事有了新的注脚','在回忆里找到彼此，在期待里看见未来'],
+  D5:['小事里的承诺，被你们一件件兑现','信任不是不说，是说了也不动摇'],
+  D6:['今天的拥抱比昨天多停留了几秒','浪漫不靠新鲜感，靠愿意在一起'],
+};
+const RESONANCE = {
+  D1:['两人都愿意袒露脆弱，安全感在细微处生根','脆弱没有被接住，而是被稳稳托住'],
+  D2:['对话里多了倾听，少了评判','你们都在努力把话说完整'],
+  D3:['都愿意先看见自己，再看见对方','不争对错，只看彼此'],
+  D4:['在回忆里找到彼此，在期待里看见未来','你们对这段关系的想象开始重叠'],
+  D5:['信任在小事里被反复确认','承诺不再是空话，是动作'],
+  D6:['浪漫不靠新鲜感，靠愿意在一起','心动被你们重新接住了一次'],
+};
+const COMPLEMENT = {
+  D1:['一方先开口，另一方总能稳稳接住','一个怕说错，一个愿等'],
+  D2:['一个善于表达，一个善于接住','一个习惯直说，一个习惯听完'],
+  D3:['一个先低头，一个愿给台阶','一个易上头，一个能拉回'],
+  D4:['一个负责记，一个负责续','一个想远方，一个顾脚下'],
+  D5:['一个稳得住，一个信得过','一个敢承诺，一个敢相信'],
+  D6:['一个制造心动，一个接住心动','一个主动靠近，一个温柔回应'],
+};
+
+// ==================== 伪随机 ====================
+let _seed = 20260706;
+function rand() { _seed = (_seed * 1103515245 + 12345) & 0x7fffffff; return _seed / 0x7fffffff; }
+function randInt(min, max) { return Math.floor(rand() * (max - min + 1)) + min; }
+function pick(arr) { return arr[Math.floor(rand() * arr.length)]; }
+
+// ==================== 日期工具 ====================
+const START_DATE = new Date('2026-07-06T00:00:00+08:00');
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function fmtDate(d) { return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+function fmtShort(d) { return (d.getMonth()+1) + '/' + d.getDate(); }
+
+// ==================== 模拟 ====================
+function simulate() {
+  const days = [];
+  let streakAlive = false, currentStreak = 0, longestStreak = 0;
+  const breakpoints = [];
+
+  for (let i = 0; i < 30; i++) {
+    const day = i + 1;
+    const date = addDays(START_DATE, i);
+    const task = TASKS[i];
+    let statusA = 'done', statusB = 'done', isBreakpoint = false, skipReason;
+
+    if (day === 7) { statusB = 'skipped'; isBreakpoint = true; skipReason = 'B 当天加班到深夜，未来得及完成'; breakpoints.push(day); }
+    else if (day === 18) { statusA = 'skipped'; isBreakpoint = true; skipReason = 'A 出差途中手机没电，错过当天任务'; breakpoints.push(day); }
+
+    const bothDone = statusA === 'done' && statusB === 'done';
+    let harmony, aiSummary, resonance, complement;
+
+    if (bothDone) {
+      streakAlive = true; currentStreak += 1; longestStreak = Math.max(longestStreak, currentStreak);
+      harmony = randInt(60, 95);
+      aiSummary = pick(AI_SUMMARY[task.dim]);
+      resonance = pick(RESONANCE[task.dim]);
+      complement = pick(COMPLEMENT[task.dim]);
+    } else {
+      streakAlive = false; currentStreak = 0;
+    }
+
+    days.push({ day, date: fmtDate(date), dateShort: fmtShort(date), task, statusA, statusB, harmony, aiSummary, resonance, complement, streakAlive, currentStreak, isBreakpoint, skipReason });
+  }
+
+  const completedDates = days.filter(d => d.harmony !== undefined).length;
+  const scores = days.filter(d => d.harmony !== undefined).map(d => d.harmony);
+  const avgHarmony = Math.round(scores.reduce((a,b) => a+b, 0) / scores.length);
+  return { days, stats: { completedDates, skippedDays: breakpoints.length, finalStreak: currentStreak, longestStreak, avgHarmony, totalDays: 30, breakpoints } };
+}
+
+// ==================== 渲染 ====================
+const { days, stats } = simulate();
+const completionRate = Math.round((stats.completedDates / stats.totalDays) * 100);
+const breakpointDays = stats.breakpoints.map(b => days[b-1]);
+const detailDays = [1, 7, 30].map(n => days[n-1]);
+
+let html = '';
+
+// 统计卡
+html += `<div class="stats-card">
+  <div class="stats-grid">
+    <div class="stats-item"><div class="stats-num">${stats.completedDates}<span class="unit">/${stats.totalDays}天</span></div><div class="stats-label">完成天数</div></div>
+    <div class="stats-divider"></div>
+    <div class="stats-item"><div class="stats-num">${stats.finalStreak}<span class="unit">天</span></div><div class="stats-label">当前连续</div></div>
+    <div class="stats-divider"></div>
+    <div class="stats-item"><div class="stats-num">${stats.skippedDays}<span class="unit">天</span></div><div class="stats-label">跳过天数</div></div>
+    <div class="stats-divider"></div>
+    <div class="stats-item"><div class="stats-num">${stats.avgHarmony}<span class="unit">分</span></div><div class="stats-label">平均默契度</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" style="width:${completionRate}%"></div></div>
+  <div class="progress-meta">
+    <span>完成率 ${completionRate}% · 最长连续 ${stats.longestStreak} 天</span>
+    <span class="breakpoints">断点 ${stats.breakpoints.map(b => '第'+b+'天').join('、')}</span>
+  </div>
+</div>`;
+
+// 类型卡
+html += `<div class="type-card">
+  <div class="type-head"><span class="type-name">烟火余生型</span><span class="type-code">OLD_COUPLE</span></div>
+  <div class="type-line">我们的浪漫不是烛光晚餐，是知道对方鞋子放哪只脚。</div>
+  <div class="type-meta"><span class="tag">稳定期</span><span class="tag">安全×安全</span><span class="tag">冲突修复型</span></div>
+</div>`;
+
+// 时间轴
+html += `<div class="section-title">30天任务时间轴</div><div class="timeline">`;
+days.forEach(d => {
+  html += `<div class="day-row${d.isBreakpoint ? ' breakpoint' : ''}">
+    <div class="day-badge">D${String(d.day).padStart(2,'0')}</div>
+    <div class="day-main">
+      <span class="day-title">${d.task.title}</span>
+      <div class="day-sub">
+        <span class="day-tag">${d.dateShort}</span>
+        <span class="day-tag">${d.task.dim}·${DIM_LABEL[d.task.dim]}</span>
+        <span class="day-tag diff-${d.task.difficulty}">${DIFF_LABEL[d.task.difficulty]}</span>
+      </div>
+    </div>
+    <div class="day-right">
+      ${d.harmony !== undefined ? `<span class="day-harmony">${d.harmony}</span>` : `<span class="day-harmony skipped">—</span>`}
+      <div class="day-status">
+        <span class="status-dot ${d.statusA}">A·${d.statusA === 'done' ? '完成' : '跳过'}</span>
+        <span class="status-dot ${d.statusB}">B·${d.statusB === 'done' ? '完成' : '跳过'}</span>
+      </div>
+    </div>
+  </div>`;
+});
+html += `</div>`;
+
+// 断点说明
+html += `<div class="section-title">断点续接说明</div>
+<div class="breakpoint-card">
+  <div class="bp-intro">30天挑战采用「断点续接」机制：一方当天跳过 → 当日连续中断（streakAlive 置为 false），但累计完成天数不重置；次日双方都完成 → 连接复活，从 1 重新计连续。累计完成天数持续累加，断点不影响最终进度。</div>`;
+breakpointDays.forEach(d => {
+  const skipper = d.statusA === 'skipped' ? 'A' : 'B';
+  const other = skipper === 'A' ? 'B' : 'A';
+  const next = days[d.day];
+  html += `<div class="bp-item">
+    <div class="bp-head"><span class="bp-day">第 ${d.day} 天 · ${d.dateShort}</span><span class="bp-skipper">${skipper} 跳过，${other} 完成</span></div>
+    <div class="bp-reason">${d.skipReason}</div>
+    <span class="bp-flow">连续状态：<span class="alive">alive</span> → <span class="broken">broken</span>（当前连续归 0）</span>
+    ${next ? `<span class="bp-flow">次日续接：第 ${next.day} 天双方完成 → <span class="alive">streakAlive 复活</span>，连续重新计为 ${next.currentStreak} 天</span>` : ''}
+  </div>`;
+});
+html += `</div>`;
+
+// 典型日期详情
+html += `<div class="section-title">典型日期详情</div>`;
+detailDays.forEach(d => {
+  html += `<div class="detail-card">
+    <div class="detail-head"><span class="detail-day">第 ${d.day} 天</span><span class="detail-date">${d.date}</span></div>
+    <div class="detail-task-title">${d.task.title}</div>
+    <div class="detail-task-desc">${d.task.desc}</div>
+    <div class="detail-meta"><span>维度：${d.task.dim}·${DIM_LABEL[d.task.dim]}</span><span>难度：${DIFF_LABEL[d.task.difficulty]}</span><span>预计：${d.task.estimatedMin} 分钟</span></div>
+    <div class="detail-status-row">
+      <span>A 状态：<span class="${d.statusA === 'done' ? 'val-done' : 'val-skipped'}">${d.statusA === 'done' ? '✅ 完成' : '⏭ 跳过'}</span></span>
+      <span>B 状态：<span class="${d.statusB === 'done' ? 'val-done' : 'val-skipped'}">${d.statusB === 'done' ? '✅ 完成' : '⏭ 跳过'}</span></span>
+    </div>`;
+  if (d.isBreakpoint) {
+    html += `<div class="detail-break">
+      <span class="reason">⚠️ 断点日：${d.skipReason}</span>
+      <span class="detail-streak">streakAlive：<span class="broken">false</span> · 当前连续：${d.currentStreak} 天</span>
+    </div>`;
+  } else {
+    html += `<div>
+      <div class="detail-harmony"><span class="detail-harmony-num"><span class="label">默契度</span>${d.harmony} 分</span></div>
+      <span class="detail-ai">🤖 AI 总结：${d.aiSummary}</span>
+      <span class="detail-point">✨ 共鸣点：${d.resonance}</span>
+      <span class="detail-point">🧩 互补点：${d.complement}</span>
+      <span class="detail-streak">streakAlive：<span class="alive">true</span> · 当前连续：${d.currentStreak} 天</span>
+    </div>`;
+  }
+  html += `</div>`;
+});
+
+html += `<div class="sim-footer">
+  <div>烟火余生型的 30 天，没有惊天动地的剧情，只有「稳稳在场」。</div>
+  <div>浪漫不是烛光晚餐，是知道对方鞋子放哪只脚。</div>
+</div>`;
+
+document.getElementById('app').innerHTML = html;
+</script>
+</body>
+</html>
